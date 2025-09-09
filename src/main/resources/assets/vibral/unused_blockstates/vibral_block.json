@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "vibral:block/vibral_block"
+    }
+  }
+}
