@@ -4,7 +4,6 @@ import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemPlacementContext;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
@@ -13,7 +12,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
-import net.zadezapper.vibral.block.ModBlocks;
 
 public class RawVibralBlock extends MultifaceGrowthBlock implements Waterloggable {
     public static final MapCodec<RawVibralBlock> CODEC = createCodec(RawVibralBlock::new);
@@ -49,7 +47,7 @@ public class RawVibralBlock extends MultifaceGrowthBlock implements Waterloggabl
 
     @Override
     protected boolean canReplace(BlockState state, ItemPlacementContext context) {
-        return !context.getStack().isOf(Item.fromBlock(ModBlocks.RAW_VIBRAL)) || super.canReplace(state, context);
+        return false;
     }
 
     @Override

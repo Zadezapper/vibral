@@ -1,11 +1,14 @@
 package net.zadezapper.vibral.item;
 
+import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.item.*;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.zadezapper.vibral.Vibral;
+import net.zadezapper.vibral.block.ModBlocks;
 
 /// ## Planned Features
 ///
@@ -66,6 +69,7 @@ public class ModItems {
 
     public static void registerModItems() {
         Vibral.LOGGER.info("Registering Items for " + Vibral.MOD_ID);
+        BlockRenderLayerMap.INSTANCE.putBlock(ModBlocks.RAW_VIBRAL, RenderLayer.getCutout());
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.TOOLS).register(entries -> {
             entries.add(VIBRAL_SHOVEL);

@@ -13,33 +13,28 @@ import net.zadezapper.vibral.Vibral;
 import net.zadezapper.vibral.block.advanced.RawVibralBlock;
 
 public class ModBlocks {
-    public static final Block VIBRAL_BLOCK = registerBlock(true, "vibral_block",
+    public static final Block VIBRAL_BLOCK = registerBlock( "vibral_block",
             new Block(AbstractBlock.Settings.create()
                     .strength(5f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.METAL))
     );
-    public static final Block RAW_VIBRAL_BLOCK = registerBlock(true, "raw_vibral_block",
+    public static final Block RAW_VIBRAL_BLOCK = registerBlock( "raw_vibral_block",
             new Block(AbstractBlock.Settings.create()
                     .strength(0.6f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.METAL))
     );
-    /* public static final Block RAW_VIBRAL = registerBlock(true, "raw_vibral",
-            new Block(AbstractBlock.Settings.create()
-                    .strength(0.6f)
-                    .sounds(BlockSoundGroup.SCULK))
-    ); */
-    public static final Block RAW_VIBRAL = registerBlock(true, "raw_vibral",
+    public static final Block RAW_VIBRAL = registerBlock( "raw_vibral",
             new RawVibralBlock(AbstractBlock.Settings.create()
                     .strength(0.6f)
+                    .noCollision()
+                    .nonOpaque()
                     .sounds(BlockSoundGroup.SCULK))
     );
 
-    private static Block registerBlock(boolean shouldCreateItem, String name, Block block) {
-        if (shouldCreateItem) {
-            registerBlockItem(name, block);
-        }
+    private static Block registerBlock(String name, Block block) {
+        registerBlockItem(name, block);
         return Registry.register(Registries.BLOCK, Identifier.of(Vibral.MOD_ID, name), block);
     }
 

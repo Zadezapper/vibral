@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "vibral:block/raw_vibral"
+    "layer0": "vibral:item/raw_vibral"
   }
 }

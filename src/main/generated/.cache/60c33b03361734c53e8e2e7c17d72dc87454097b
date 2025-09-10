@@ -1,3 +1,4 @@
-// 1.21.1	2025-09-08T16:29:59.8303415	Vibral/Tags for minecraft:block
+// 1.21.1	2025-09-10T16:48:46.8600577	Vibral/Tags for minecraft:block
 0fa631fdf95985b3e0c39fbea164795a6a89d6fd data\minecraft\tags\block\needs_diamond_tool.json
-47261a7c21664c7b8323d18a4ee9cc62f33ead06 data\minecraft\tags\block\mineable\pickaxe.json
+0fa631fdf95985b3e0c39fbea164795a6a89d6fd data\minecraft\tags\block\mineable\pickaxe.json
+5101dfce88436bbfbf3eb0799cd42e86cc76367a data\minecraft\tags\block\mineable\hoe.json
