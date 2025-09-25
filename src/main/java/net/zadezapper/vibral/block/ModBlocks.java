@@ -43,7 +43,7 @@ public class ModBlocks {
     }
 
     public static void registerModBlocks() {
-        Vibral.LOGGER.info("Registering Mod Blocks for " + Vibral.MOD_ID);
+        Vibral.LOGGER.info("Registering Blocks for " + Vibral.MOD_ID);
 
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.BUILDING_BLOCKS).register(entries -> {
             entries.add(VIBRAL_BLOCK);
