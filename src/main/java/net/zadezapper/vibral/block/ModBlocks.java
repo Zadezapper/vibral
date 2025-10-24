@@ -11,6 +11,7 @@ import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.zadezapper.vibral.Vibral;
 import net.zadezapper.vibral.block.advanced.RawVibralBlock;
+import net.zadezapper.vibral.block.advanced.VibralPanelBlock;
 
 public class ModBlocks {
     public static final Block VIBRAL_BLOCK = registerBlock( "vibral_block",
@@ -31,6 +32,12 @@ public class ModBlocks {
                     .noCollision()
                     .nonOpaque()
                     .sounds(BlockSoundGroup.SCULK))
+    );
+    public static final Block VIBRAL_PANEL = registerBlock( "vibral_panel",
+            new VibralPanelBlock(AbstractBlock.Settings.create()
+                    .strength(1f)
+                    .requiresTool()
+                    .sounds(BlockSoundGroup.METAL))
     );
 
     private static Block registerBlock(String name, Block block) {
@@ -54,6 +61,9 @@ public class ModBlocks {
         });
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> {
             entries.add(RAW_VIBRAL);
+        });
+        ItemGroupEvents.modifyEntriesEvent(ItemGroups.FUNCTIONAL).register(entries -> {
+            entries.add(VIBRAL_PANEL);
         });
     }
 }

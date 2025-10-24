@@ -47,13 +47,13 @@ public abstract class PlayerEntityMixin {
         }
     }
 
-    /* @Inject(at = @At("HEAD"), method = "getMoveEffect", cancellable = true)
+    @Inject(at = @At("HEAD"), method = "getMoveEffect", cancellable = true)
     public void getMoveEffect(CallbackInfoReturnable<Entity.MoveEffect> callbackInfoReturnable) {
         if (isWearingFullVibralArmorSet(entity)) {
             callbackInfoReturnable.setReturnValue(Entity.MoveEffect.NONE);
             callbackInfoReturnable.cancel();
         }
-    } */
+    }
 
     @Inject(at = @At("HEAD"), method = "playSound", cancellable = true)
     public void playSound(SoundEvent sound, float volume, float pitch, CallbackInfo callbackInfo) {

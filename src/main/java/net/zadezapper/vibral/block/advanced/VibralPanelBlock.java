@@ -5,7 +5,6 @@ import net.minecraft.block.*;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
-import net.minecraft.item.Items;
 import net.minecraft.state.StateManager;
 import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
@@ -14,18 +13,18 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 
-public class RawVibralBlock extends MultifaceGrowthBlock implements Waterloggable {
-    public static final MapCodec<RawVibralBlock> CODEC = createCodec(RawVibralBlock::new);
+public class VibralPanelBlock extends MultifaceGrowthBlock implements Waterloggable {
+    public static final MapCodec<VibralPanelBlock> CODEC = createCodec(VibralPanelBlock::new);
     private static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     private final LichenGrower grower = new LichenGrower(this);
 
-    public RawVibralBlock(Settings settings) {
+    public VibralPanelBlock(Settings settings) {
         super(settings);
         this.setDefaultState(this.getDefaultState().with(WATERLOGGED, false));
     }
 
     @Override
-    public MapCodec<RawVibralBlock> getCodec() {
+    public MapCodec<VibralPanelBlock> getCodec() {
         return CODEC;
     }
 

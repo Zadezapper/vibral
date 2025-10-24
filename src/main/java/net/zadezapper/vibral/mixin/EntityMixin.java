@@ -51,7 +51,7 @@ public abstract class EntityMixin {
     @Inject(at = @At("HEAD"), method = "getMoveEffect", cancellable = true)
     public void getMoveEffect(CallbackInfoReturnable<Entity.MoveEffect> callbackInfoReturnable) {
         if (isWearingFullVibralArmorSet(entity)) {
-            callbackInfoReturnable.setReturnValue(Entity.MoveEffect.EVENTS);
+            callbackInfoReturnable.setReturnValue(Entity.MoveEffect.NONE);
             callbackInfoReturnable.cancel();
         }
     }
@@ -101,10 +101,10 @@ public abstract class EntityMixin {
         if (entity instanceof LivingEntity) {
             return (
                     ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_SWORD)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_PICKAXE)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_AXE)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_SHOVEL)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_HOE)
+                    || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_PICKAXE)
+                    || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_AXE)
+                    || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_SHOVEL)
+                    || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_HOE)
             );
         } else {
             return false;

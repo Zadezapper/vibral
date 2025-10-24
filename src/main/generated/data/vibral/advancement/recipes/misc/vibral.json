@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_vibral": {
+      "conditions": {
+        "items": [
+          {
+            "items": "vibral:raw_vibral"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "vibral:vibral"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_vibral"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "vibral:vibral"
+    ]
+  }
+}

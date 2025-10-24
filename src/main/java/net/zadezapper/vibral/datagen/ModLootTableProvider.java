@@ -18,5 +18,6 @@ public class ModLootTableProvider extends FabricBlockLootTableProvider {
         addDrop(ModBlocks.VIBRAL_BLOCK);
         addDrop(ModBlocks.RAW_VIBRAL_BLOCK);
         addDrop(ModBlocks.RAW_VIBRAL, dropsWithSilkTouch(ModBlocks.RAW_VIBRAL));
+        addDrop(ModBlocks.VIBRAL_PANEL);
     }
 }

@@ -24,9 +24,7 @@ public abstract class VibrationSelectorMixin {
 
         if (vibrationSource != null) {
             if (isWearingFullVibralArmorSet(vibrationSource)) {
-                // callbackInfoReturnable.setReturnValue(SoundEvents.ENTITY_PLAYER_BURP);
                 callbackInfoReturnable.setReturnValue(false);
-                // callbackInfoReturnable.setReturnValue(SoundEvent.of(Identifier.ofVanilla("entity.player.burp"), 32767));
                 callbackInfoReturnable.cancel();
             }
         }

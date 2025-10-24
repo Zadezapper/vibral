@@ -17,11 +17,16 @@ public class ModBlockTagProvider extends FabricTagProvider.BlockTagProvider {
     protected void configure(RegistryWrapper.WrapperLookup wrapperLookup) {
         getOrCreateTagBuilder(BlockTags.PICKAXE_MINEABLE)
                 .add(ModBlocks.VIBRAL_BLOCK)
+                .add(ModBlocks.VIBRAL_PANEL)
                 .add(ModBlocks.RAW_VIBRAL_BLOCK);
         getOrCreateTagBuilder(BlockTags.NEEDS_DIAMOND_TOOL)
                 .add(ModBlocks.VIBRAL_BLOCK)
+                .add(ModBlocks.VIBRAL_PANEL)
                 .add(ModBlocks.RAW_VIBRAL_BLOCK);
         getOrCreateTagBuilder(BlockTags.HOE_MINEABLE)
                 .add(ModBlocks.RAW_VIBRAL);
+        getOrCreateTagBuilder(BlockTags.DAMPENS_VIBRATIONS)
+                .add(ModBlocks.VIBRAL_PANEL)
+                .add(ModBlocks.VIBRAL_BLOCK);
     }
 }

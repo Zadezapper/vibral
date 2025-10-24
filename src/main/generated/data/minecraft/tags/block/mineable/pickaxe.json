@@ -1,6 +1,7 @@
 {
   "values": [
     "vibral:vibral_block",
+    "vibral:vibral_panel",
     "vibral:raw_vibral_block"
   ]
 }

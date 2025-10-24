@@ -1,4 +1,5 @@
-// 1.21.1	2025-09-10T16:48:46.8600577	Vibral/Tags for minecraft:block
-0fa631fdf95985b3e0c39fbea164795a6a89d6fd data\minecraft\tags\block\needs_diamond_tool.json
-0fa631fdf95985b3e0c39fbea164795a6a89d6fd data\minecraft\tags\block\mineable\pickaxe.json
+// 1.21.1	2025-10-02T14:25:03.6809626	Vibral/Tags for minecraft:block
+0a3f91bfdd415a5518948f5505617bc65b5e787f data\minecraft\tags\block\needs_diamond_tool.json
+54dd2a085e43b360ce5f9a21ded7576bb8d75831 data\minecraft\tags\block\dampens_vibrations.json
+0a3f91bfdd415a5518948f5505617bc65b5e787f data\minecraft\tags\block\mineable\pickaxe.json
 5101dfce88436bbfbf3eb0799cd42e86cc76367a data\minecraft\tags\block\mineable\hoe.json
