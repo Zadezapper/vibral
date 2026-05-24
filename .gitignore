@@ -30,7 +30,12 @@ bin/
 
 # fabric
 
-run/
+run/*
+!run/mods
+!run/saves
+!run/shaderpacks
+!run/command_history.txt
+!run/options.txt
 
 # java
 
@@ -38,3 +43,8 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+*.psd
+/src/main/generated/.cache/767421cc2fbe8057a3c11595615daf3614c5a4d5
+/gradle/wrapper/gradle-wrapper.jar
+/gradle/wrapper/gradle-wrapper.properties
