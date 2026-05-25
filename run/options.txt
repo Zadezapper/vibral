@@ -13,7 +13,7 @@ glintSpeed:0.5
 glintStrength:0.75
 prioritizeChunkUpdates:0
 fullscreen:false
-gamma:0.5
+gamma:0.0
 graphicsMode:1
 guiScale:2
 maxFps:120
@@ -121,10 +121,6 @@ key_key.hotbar.6:key.keyboard.6
 key_key.hotbar.7:key.keyboard.7
 key_key.hotbar.8:key.keyboard.8
 key_key.hotbar.9:key.keyboard.9
-key_keybind.invmove.toggleMove:key.keyboard.unknown
-key_key.clienttweaks.hideOffhandItem:key.keyboard.unknown
-key_key.clienttweaks.disableStepAssist:key.keyboard.unknown
-key_key.clienttweaks.disableLogStripping:key.keyboard.unknown
 key_key.jade.config:key.keyboard.keypad.0
 key_key.jade.show_overlay:key.keyboard.keypad.1
 key_key.jade.toggle_liquid:key.keyboard.keypad.2
@@ -132,6 +128,10 @@ key_key.jade.narrate:key.keyboard.keypad.5
 key_key.jade.show_details_alternative:key.keyboard.unknown
 key_net.clayborn.accurateblockplacement.togglevanillaplacement:key.keyboard.unknown
 key_net.clayborn.accurateblockplacement.togglefastbreaking:key.keyboard.unknown
+key_keybind.invmove.toggleMove:key.keyboard.unknown
+key_key.clienttweaks.hideOffhandItem:key.keyboard.unknown
+key_key.clienttweaks.disableStepAssist:key.keyboard.unknown
+key_key.clienttweaks.disableLogStripping:key.keyboard.unknown
 key_key.clientsort.edit:key.keyboard.unknown
 key_key.clientsort.op.sort:key.keyboard.unknown
 key_key.clientsort.op.stackFill:key.keyboard.unknown

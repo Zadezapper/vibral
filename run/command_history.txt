@@ -1,50 +1,50 @@
-/give TheFrostLourd vibral:vibral_chestplate
-/give TheFrostLourd vibral:vibral_leggings
-/give TheFrostLourd vibral:vibral_boots
-/gamemode creative TheFrostLourd
-/summon cod
-/effect clear @s minecraft:darkness
+/kill @e[type=minecraft:phantom]
+/execute at TheFrostLourd run summon minecraft:wither_skeleton ~ ~ ~ {NoAI:1b}
 /tp TheFrostLourd Zadezapper
-/fill 58 65 -80
-/fill 58 65 -80 58 63 -77 stone
-/setblock 91 63 -71
-/setblock 91 63 -71 vibral:vibral_panel[down=true, east=true, north=true, south=true, up=true, west=true]
-/tp TheFrostLourd Zadezapper
+/execute as @e[type=minecraft:wither_skeleton] run tp TheFrostLourd @s
+/gamemode spectator TheFrostLourd
+/effect give TheFrostLourd minecraft:night_vision 300 0 true
 /gamemode survival TheFrostLourd
+/execute as @e[type=minecraft:wither_skeleton] run tp TheFrostLourd @s
 /tp TheFrostLourd Zadezapper
-/kick TheFrostLourd You have been banned.
-/kick TheFrostLourd yes it was fake
-/gamemode survival TheFrostLourd
+/effect give TheFrostLourd minecraft:levitation 10 3 true
 /tp TheFrostLourd Zadezapper
-/tp TheFrostLourd 66.78 63.06 -77.18
-/kick TheFrostLourd come back in a moment
-/kick TheFrostLourd come back in 30 seconds
-/setblock 23 63 -53 vibral:vibral_panel[down=true, east=true, north=true, south=true, up=true, west=true]
-/tp 0 100 0
-/fill 0 100 0 18 100 72 stone
+/weather rain
+/effect give Zadezapper minecraft:levitation 1 255 true
+/tp TheFrostLourd
+/effect give Zadezapper minecraft:levitation 1 200 true
+/effect give TheFrostLourd minecraft:levitation 1 200 true
+/tp TheFrostLourd Zadezapper
+/effect give TheFrostLourd minecraft:resistance infinite 6 true
+/effect give TheFrostLourd minecraft:levitation 1 200 true
+/tp TheFrostLourd
+/effect clear TheFrostLourd
+/effect give @a minecraft:instant_health 1 5 true
+/give @a shield
+/tp TheFrostLourd Zadezapper
+/effect give @a minecraft:instant_health 1 5 true
+/effect give TheFrostLourd minecraft:slowness 30 255 true
+/tp TheFrostLourd
+/place structure minecraft:jungle_pyramid
+/effect give @s minecraft:night_vision
 /effect give @s minecraft:night_vision infinite 0 true
-/clone 19 103 0
-/clone 19 103 0 18 103 4
-/clone 19 103 0 18 103 4 19 103 1 replace force
-/clone 19 103 0 18 103 4 18 103 1 replace force
-/tick freeze
-/tick unfreeze
-/fill 0 101 1
-/fill 0 101 1 9 101 60 lava
-/fill 0 101 1 9 101 60 air
-/fill -1 101 0
-/fill -1 101 0 18 101 61 minecraft:red_stained_glass replace minecraft:red_concrete
-/fill 0 101 1
-/fill 0 101 1 18 101 61 glass replace air
-/fill 0 101 1 18 101 61 minecraft:barrier replace glass
-/fill 0 101 1 18 102 61 minecraft:barrier replace air
-/fill -1 104 0
-/fill -1 104 0 18 103 61 light replace air
-/fill -1 103 0
-/fill -1 103 0 18 102 61 minecraft:barrier replace light
-/fill -1 103 0 18 102 61 minecraft:barrier replace air
-/fill 0 100 61
-/fill 0 100 61 18 103 61 air
-/fill -1 103 0
-/fill -1 103 0 18 101 60 air replace minecraft:barrier
-/setblock 13 101 55 bedrock
+/place structure minecraft:mansion
+/tp TheFrostLourd Zadezapper
+/effect give TheFrostLourd minecraft:night_vision 1
+/tp TheFrostLourd Zadezapper
+/tp 9145b628-0e69-4d4f-bfe3-55c801303455 Zadezapper
+/tp TheFrostLourd Zadezapper
+/effect clear
+/effect give @s minecraft:night_vision infinite 0 true
+/effect clear
+/effect give @s minecraft:invisibility infinite 0 true
+/enchant @s minecraft:protection 2
+/enchant @s minecraft:sharpness 3
+/effect give TheFrostLourd minecraft:glowing infinite 0 true
+/effect clear TheFrostLourd minecraft:resistance
+/give @s iron_axe
+/gamerule keepInventory true
+/tp TheFrostLourd Zadezapper
+/tp 0 0 0
+/tp 0 100 0
+/effect clear
