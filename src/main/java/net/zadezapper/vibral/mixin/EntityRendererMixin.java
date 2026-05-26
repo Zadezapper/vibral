@@ -1,7 +1,7 @@
 package net.zadezapper.vibral.mixin;
 
 
-import net.minecraft.block.BlockState;
+import net.minecraft.block.Block;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
@@ -14,7 +14,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
 import net.zadezapper.vibral.item.ModItems;
@@ -42,28 +41,14 @@ public abstract class EntityRendererMixin<entity extends Entity> {
     @Inject(method = "renderLabelIfPresent", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;isSneaky()Z"), cancellable = true)
     private void renderLabelIfPresent(Entity entity, Text text, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, float tickDelta, CallbackInfo callbackInfo) {
         Camera camera = MinecraftClient.getInstance().gameRenderer.getCamera();
-        // Goal: Raycast from the camera to the entity, and check for collisions with vibral blocks. If collision found, cancel nametag rendering.
-        // Currently: Appears to raycast from camera to player with too large step size, and or cuts off at some point for some reason
         Vec3d cameraPosition = camera.getPos();
-        Vec3d entityPosition = entity.getBoundingBox().getCenter(); // entity.getCameraPosVec(tickDelta);
-        Vec3d rayVector = cameraPosition.subtract(entityPosition); // entityPosition.add(entityRotation.x * distance, entityRotation.y * distance, entityRotation.z * distance); // Vector starting at entity and pointing where entity is looking
+        Vec3d entityPosition = entity.getBoundingBox().getCenter();
         RaycastContext context = new RaycastContext(
-                entityPosition, rayVector, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, entity
+                cameraPosition, entityPosition, RaycastContext.ShapeType.OUTLINE, RaycastContext.FluidHandling.NONE, entity
         );
-        BlockHitResult hit = BlockView.raycast(context.getStart(), context.getEnd(), context, (innerContext, pos) -> {
-            BlockState blockState = entity.getWorld().getBlockState(pos);
+        Block hit = entity.getWorld().getBlockState(entity.getWorld().raycast(context).getBlockPos()).getBlock();
 
-            if (blockState.getBlock() != VIBRAL_PANEL && blockState.getBlock() != VIBRAL_BLOCK) {
-                return null;
-            }
-
-            Vec3d vec3d4 = innerContext.getStart();
-            Vec3d vec3d5 = innerContext.getEnd();
-            VoxelShape voxelShape = innerContext.getBlockShape(blockState, entity.getWorld(), pos);
-            return entity.getWorld().raycastBlock(vec3d4, vec3d5, pos, voxelShape, blockState);
-        }, innerContext -> null);
-
-        if (hit != null) {
+        if (hit == VIBRAL_BLOCK || hit == VIBRAL_PANEL) {
             callbackInfo.cancel();
         }
     }
