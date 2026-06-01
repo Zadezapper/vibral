@@ -3,17 +3,25 @@
   "package": "net.zadezapper.vibral.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
+    "BlockItemMixin",
+    "BucketItemMixin",
     "EndermanEntityMixin",
     "EntityMixin",
     "EntityRendererMixin",
+    "LivingEntityMixin",
+    "PersistentProjectileEntityMixin",
     "PlayerEntityMixin",
-    "VibrationSelectorMixin",
-    "WorldMixin"
+    "VibrationSelectorMixin"
   ],
   "injectors": {
     "defaultRequire": 1
   },
   "overwrites": {
     "requireAnnotations": true
-	}
+  },
+  "client": [
+    "ClientPlayerEntityMixin",
+    "ClientPlayerInteractionManagerMixin",
+    "ClientPlayNetworkHandlerMixin"
+  ]
 }

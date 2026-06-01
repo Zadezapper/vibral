@@ -1,34 +1,3 @@
-/tp TheFrostLourd
-/effect give Zadezapper minecraft:levitation 1 200 true
-/effect give TheFrostLourd minecraft:levitation 1 200 true
-/tp TheFrostLourd Zadezapper
-/effect give TheFrostLourd minecraft:resistance infinite 6 true
-/effect give TheFrostLourd minecraft:levitation 1 200 true
-/tp TheFrostLourd
-/effect clear TheFrostLourd
-/effect give @a minecraft:instant_health 1 5 true
-/give @a shield
-/tp TheFrostLourd Zadezapper
-/effect give @a minecraft:instant_health 1 5 true
-/effect give TheFrostLourd minecraft:slowness 30 255 true
-/tp TheFrostLourd
-/place structure minecraft:jungle_pyramid
-/effect give @s minecraft:night_vision
-/effect give @s minecraft:night_vision infinite 0 true
-/place structure minecraft:mansion
-/tp TheFrostLourd Zadezapper
-/effect give TheFrostLourd minecraft:night_vision 1
-/tp TheFrostLourd Zadezapper
-/tp 9145b628-0e69-4d4f-bfe3-55c801303455 Zadezapper
-/tp TheFrostLourd Zadezapper
-/effect clear
-/effect give @s minecraft:night_vision infinite 0 true
-/effect clear
-/effect give @s minecraft:invisibility infinite 0 true
-/enchant @s minecraft:protection 2
-/enchant @s minecraft:sharpness 3
-/effect give TheFrostLourd minecraft:glowing infinite 0 true
-/effect clear TheFrostLourd minecraft:resistance
 /give @s iron_axe
 /gamerule keepInventory true
 /tp TheFrostLourd Zadezapper
@@ -48,3 +17,34 @@
 /effect clear
 /gamerule doWeatherCycle false
 /weather rain
+/effect give @s minecraft:resistance infinite 4 true
+/summon minecraft:skeleton
+/summon tnt
+/
+/summon minecraft:skeleton
+/
+/summon tnt
+/
+/summon tnt
+/give @s mace
+/summon minecraft:skeleton
+/give @s minecraft:water_bucket
+/give @s vibral:vibral_sword
+/effect clear
+/setblock 61 63 -78
+/setblock 61 63 -78 air
+/give @s vibral:vibral_[]
+/give @s vibral:vibral_[unbreakable={}]
+/give @s vibral:vibral_helmet[unbreakable={}]
+/give @s vibral:vibral_chestplate[unbreakable={}]
+/give @s vibral:vibral_leggings[unbreakable={}]
+/give @s vibral:vibral_boots[unbreakable={}]
+/gamerule doDaylightCycle true
+/gamerule doWeatherCycleCycle true
+/gamerule doWeatherCycle true
+/gamerule doDaylightCycle false
+/gamerule doWeatherCycle false
+/give @s chest 2
+/summon husk
+/effect give @s minecraft:night_vision infinite 0 true
+/effect clear
