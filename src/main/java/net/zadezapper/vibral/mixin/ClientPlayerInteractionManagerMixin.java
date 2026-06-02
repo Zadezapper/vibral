@@ -1,17 +1,24 @@
 package net.zadezapper.vibral.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
 import net.minecraft.entity.*;
 import net.zadezapper.vibral.item.ModItems;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(value = ClientPlayerInteractionManager.class, priority = 4096)
 public abstract class ClientPlayerInteractionManagerMixin {
+
+    @Shadow
+    @Final
+    private MinecraftClient client;
 
     @WrapWithCondition(
             at = @At(
@@ -21,7 +28,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
             method = "updateBlockBreakingProgress"
     )
     private boolean skip(SoundManager instance, SoundInstance sound) {
-        return true; // return !isHoldingVibralTool(((ClientPlayerInteractionManager)(Object)this).client.player);
+        return !isHoldingVibralTool(client.player);
     }
 
     @Unique
