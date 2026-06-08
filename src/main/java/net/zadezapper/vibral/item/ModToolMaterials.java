@@ -2,17 +2,15 @@ package net.zadezapper.vibral.item;
 
 import com.google.common.base.Suppliers;
 import net.minecraft.block.Block;
-import net.minecraft.item.Items;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.zadezapper.vibral.util.ModTags;
 
 import java.util.function.Supplier;
 
 public enum ModToolMaterials implements ToolMaterial {
-    VIBRAL(ModTags.Blocks.INCORRECT_FOR_VIBRAL_TOOL, 1791, 7.5F, 2.5F, 12, () -> Ingredient.ofItems(ModItems.VIBRAL));
+    VIBRAL(ModTags.Blocks.INCORRECT_FOR_VIBRAL_TOOL, 1791, 7.5F, 2.5F, 25, () -> Ingredient.ofItems(ModItems.VIBRAL));
 
     private final TagKey<Block> inverseTag;
     private final int itemDurability;

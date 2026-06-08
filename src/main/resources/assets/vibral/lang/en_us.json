@@ -13,5 +13,10 @@
   "block.vibral.vibral_block": "Block of Vibral",
   "block.vibral.raw_vibral_block": "Block of Raw Vibral",
   "block.vibral.raw_vibral": "Raw Vibral",
-  "block.vibral.vibral_panel": "Vibral Panel"
+  "block.vibral.vibral_panel": "Vibral Panel",
+
+  "enchantment.vibral.collecting": "Collecting",
+  "enchantment.vibral.obscuring": "Obscuring",
+
+  "effect.vibral.silence": "Silence"
 }

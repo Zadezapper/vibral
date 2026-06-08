@@ -5,7 +5,10 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerInteractionManager;
 import net.minecraft.client.sound.SoundInstance;
 import net.minecraft.client.sound.SoundManager;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,7 +31,7 @@ public abstract class ClientPlayerInteractionManagerMixin {
             method = "updateBlockBreakingProgress"
     )
     private boolean skip(SoundManager instance, SoundInstance sound) {
-        return !isHoldingVibralTool(client.player);
+        return !(isHoldingVibralTool(client.player) || client.player.hasStatusEffect(ModEffects.SILENCE));
     }
 
     @Unique

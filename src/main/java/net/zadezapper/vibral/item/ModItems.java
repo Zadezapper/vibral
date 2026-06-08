@@ -48,20 +48,19 @@ public class ModItems {
 
     public static final Item VIBRAL_HELMET = registerItem("vibral_helmet",
             new ArmorItem(ModArmorMaterials.VIBRAL_ARMOR_MATERIAL, ArmorItem.Type.HELMET, new Item.Settings()
-                    .maxDamage(ArmorItem.Type.HELMET.getMaxDamage(30))));
+                    .maxDamage(ArmorItem.Type.HELMET.getMaxDamage(35))));
 
     public static final Item VIBRAL_CHESTPLATE = registerItem("vibral_chestplate",
             new ArmorItem(ModArmorMaterials.VIBRAL_ARMOR_MATERIAL, ArmorItem.Type.CHESTPLATE, new Item.Settings()
-                    .maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(30))));
+                    .maxDamage(ArmorItem.Type.CHESTPLATE.getMaxDamage(35))));
 
     public static final Item VIBRAL_LEGGINGS = registerItem("vibral_leggings",
             new ArmorItem(ModArmorMaterials.VIBRAL_ARMOR_MATERIAL, ArmorItem.Type.LEGGINGS, new Item.Settings()
-                    .maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(30))));
+                    .maxDamage(ArmorItem.Type.LEGGINGS.getMaxDamage(35))));
 
     public static final Item VIBRAL_BOOTS = registerItem("vibral_boots",
             new ArmorItem(ModArmorMaterials.VIBRAL_ARMOR_MATERIAL, ArmorItem.Type.BOOTS, new Item.Settings()
-                    .maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(30))));
-
+                    .maxDamage(ArmorItem.Type.BOOTS.getMaxDamage(35))));
 
     private static Item registerItem(String name, Item item) {
         return Registry.register(Registries.ITEM, Identifier.of(Vibral.MOD_ID, name), item);

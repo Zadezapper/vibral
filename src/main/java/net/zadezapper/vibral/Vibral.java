@@ -2,7 +2,7 @@ package net.zadezapper.vibral;
 
 import net.fabricmc.api.ModInitializer;
 import net.zadezapper.vibral.block.ModBlocks;
-import net.zadezapper.vibral.entity.ModEntities;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
 import net.zadezapper.vibral.sound.ModSoundEvents;
 import org.slf4j.Logger;
@@ -17,6 +17,6 @@ public class Vibral implements ModInitializer {
 		ModItems.registerModItems();
 		ModSoundEvents.registerSounds();
 		ModBlocks.registerModBlocks();
-		ModEntities.registerModEntities();
+		ModEffects.registerEffects();
 	}
 }

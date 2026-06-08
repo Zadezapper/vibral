@@ -1,9 +1,12 @@
 package net.zadezapper.vibral.mixin;
 
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -19,9 +22,8 @@ public abstract class ClientPlayerEntityMixin {
     @Inject(at = @At("HEAD"), method = "playSound", cancellable = true)
     public void playSound(SoundEvent sound, float volume, float pitch, CallbackInfo callbackInfo) {
         if (entity != null) {
-            if (isWearingFullVibralArmorSet(entity)) {
+            if (isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE)) {
                 callbackInfo.cancel();
-                return;
             }
         }
     }

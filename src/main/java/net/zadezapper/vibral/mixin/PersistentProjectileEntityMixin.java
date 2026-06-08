@@ -1,10 +1,13 @@
 package net.zadezapper.vibral.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.hit.EntityHitResult;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -21,7 +24,7 @@ public abstract class PersistentProjectileEntityMixin {
             method = "onEntityHit"
     )
     private boolean skip(PersistentProjectileEntity instance, SoundEvent soundEvent, float volume, float pitch, EntityHitResult entityHitResult) {
-        return !isWearingFullVibralArmorSet(entityHitResult.getEntity());
+        return !(isWearingFullVibralArmorSet(entityHitResult.getEntity()) || (entityHitResult.getEntity() instanceof LivingEntity livingEntity && livingEntity.hasStatusEffect(ModEffects.SILENCE)));
     }
 
     @Unique

@@ -1,11 +1,18 @@
 package net.zadezapper.vibral.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.entity.*;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
 import net.zadezapper.vibral.sound.ModSoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
@@ -22,7 +29,7 @@ public abstract class PlayerEntityMixin {
     @Inject(at = @At("HEAD"), method = "getSwimSound", cancellable = true)
     public void getSwimSound(CallbackInfoReturnable<SoundEvent> callbackInfoReturnable) {
         if (entity != null) {
-            if (isWearingFullVibralArmorSet(entity)) {
+            if (isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE)) {
                 callbackInfoReturnable.setReturnValue(ModSoundEvents.SILENT);
                 callbackInfoReturnable.cancel();
             }
@@ -32,7 +39,7 @@ public abstract class PlayerEntityMixin {
     @Inject(at = @At("HEAD"), method = "getSplashSound", cancellable = true)
     public void getSplashSound(CallbackInfoReturnable<SoundEvent> callbackInfoReturnable) {
         if (entity != null) {
-            if (isWearingFullVibralArmorSet(entity)) {
+            if (isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE)) {
                 callbackInfoReturnable.setReturnValue(ModSoundEvents.SILENT);
                 callbackInfoReturnable.cancel();
             }
@@ -42,19 +49,63 @@ public abstract class PlayerEntityMixin {
     @Inject(at = @At("HEAD"), method = "getHighSpeedSplashSound", cancellable = true)
     public void getHighSpeedSplashSound(CallbackInfoReturnable<SoundEvent> callbackInfoReturnable) {
         if (entity != null) {
-            if (isWearingFullVibralArmorSet(entity)) {
+            if (isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE)) {
                 callbackInfoReturnable.setReturnValue(ModSoundEvents.SILENT);
                 callbackInfoReturnable.cancel();
             }
         }
     }
 
+    /*
     @Inject(at = @At("HEAD"), method = "getMoveEffect", cancellable = true)
     public void getMoveEffect(CallbackInfoReturnable<Entity.MoveEffect> callbackInfoReturnable) {
-        if (isWearingFullVibralArmorSet(entity)) {
+        if (isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE)) {
             callbackInfoReturnable.setReturnValue(Entity.MoveEffect.NONE);
             callbackInfoReturnable.cancel();
         }
+    }
+    */
+
+    @WrapOperation(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"
+            ),
+            method = "attack"
+    )
+    private boolean damage(Entity instance, DamageSource source, float amount, Operation<Boolean> original) {
+        Entity attacker = source.getAttacker();
+        if (attacker instanceof LivingEntity livingEntity && instance instanceof LivingEntity && (isHoldingVibralTool(livingEntity) || livingEntity.hasStatusEffect(ModEffects.SILENCE))) {
+            ((LivingEntity)instance).addStatusEffect(new StatusEffectInstance(
+                    ModEffects.SILENCE,
+                    60,
+                    0,
+                    true,
+                    true
+            ));
+        }
+        return original.call(instance, source, amount);
+    }
+
+    @WrapOperation(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/LivingEntity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z"
+            ),
+            method = "attack"
+    )
+    private boolean damage2(LivingEntity instance, DamageSource source, float amount, Operation<Boolean> original) {
+        Entity attacker = source.getAttacker();
+        if (attacker instanceof LivingEntity livingEntity && (isHoldingVibralTool(livingEntity) || livingEntity.hasStatusEffect(ModEffects.SILENCE))) {
+            instance.addStatusEffect(new StatusEffectInstance(
+                    ModEffects.SILENCE,
+                    60,
+                    0,
+                    true,
+                    true
+            ));
+        }
+        return original.call(instance, source, amount);
     }
 
     @WrapWithCondition(
@@ -65,7 +116,7 @@ public abstract class PlayerEntityMixin {
         method = "eatFood"
     )
     private boolean skip(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        return !isWearingFullVibralArmorSet(entity);
+        return !(isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -76,7 +127,7 @@ public abstract class PlayerEntityMixin {
             method = "attack"
     )
     private boolean skip2(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        return !isHoldingVibralTool(entity);
+        return !(isHoldingVibralTool(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -87,7 +138,7 @@ public abstract class PlayerEntityMixin {
             method = "attack"
     )
     private boolean skip3(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category) {
-        return !isHoldingVibralTool(entity);
+        return !(isHoldingVibralTool(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
     }
 
     @Unique

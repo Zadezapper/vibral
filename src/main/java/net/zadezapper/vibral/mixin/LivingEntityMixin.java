@@ -1,18 +1,39 @@
 package net.zadezapper.vibral.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.entity.*;
+import net.minecraft.enchantment.EnchantmentHelper;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.loot.LootTable;
+import net.minecraft.loot.context.LootContextParameterSet;
+import net.minecraft.loot.context.LootContextParameters;
+import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
+import net.zadezapper.vibral.accessor.FollowingItem;
+import net.zadezapper.vibral.effect.ModEffects;
+import net.zadezapper.vibral.enchantment.ModEnchantments;
 import net.zadezapper.vibral.item.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = LivingEntity.class, priority = 4096)
 public abstract class LivingEntityMixin {
+    @Shadow
+    protected PlayerEntity attackingPlayer;
+
     @Unique
     public LivingEntity entity = ((LivingEntity)(Object)this);
 
@@ -24,7 +45,51 @@ public abstract class LivingEntityMixin {
             method = "eatFood"
     )
     private boolean skip(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        return !isWearingFullVibralArmorSet(entity);
+        return !(isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
+    }
+
+    @Inject(at = @At(value = "HEAD"), method = "dropLoot", cancellable = true)
+    private void drop(DamageSource damageSource, boolean causedByPlayer, CallbackInfo callbackInfo) {
+        if (damageSource.getAttacker() instanceof LivingEntity attacker) {
+            World world = attacker.getWorld();
+            int collectingEnchantmentLevel = EnchantmentHelper.getLevel(
+                    damageSource.getAttacker().getWorld().getRegistryManager()
+                            .get(RegistryKeys.ENCHANTMENT)
+                            .getEntry(ModEnchantments.COLLECTING)
+                            .orElseThrow(),
+                    attacker.getEquippedStack(EquipmentSlot.MAINHAND)
+            );
+            if (collectingEnchantmentLevel > 0 && world instanceof ServerWorld) {
+                callbackInfo.cancel();
+                LivingEntity thisEntity = (LivingEntity)(Object)this;
+                RegistryKey<LootTable> registryKey = thisEntity.getLootTable();
+                LootTable lootTable = thisEntity.getWorld().getServer().getReloadableRegistries().getLootTable(registryKey);
+                LootContextParameterSet.Builder builder = new LootContextParameterSet.Builder((ServerWorld)thisEntity.getWorld())
+                        .add(LootContextParameters.THIS_ENTITY, thisEntity)
+                        .add(LootContextParameters.ORIGIN, thisEntity.getPos())
+                        .add(LootContextParameters.DAMAGE_SOURCE, damageSource)
+                        .addOptional(LootContextParameters.ATTACKING_ENTITY, damageSource.getAttacker())
+                        .addOptional(LootContextParameters.DIRECT_ATTACKING_ENTITY, damageSource.getSource());
+                if (causedByPlayer && this.attackingPlayer != null) {
+                    builder = builder.add(LootContextParameters.LAST_DAMAGE_PLAYER, this.attackingPlayer).luck(this.attackingPlayer.getLuck());
+                }
+
+                LootContextParameterSet lootContextParameterSet = builder.build(LootContextTypes.ENTITY);
+                lootTable.generateLoot(lootContextParameterSet, thisEntity.getLootTableSeed(), stack -> {
+                    if (!stack.isEmpty() && !thisEntity.getWorld().isClient) {
+                        ItemEntity itemEntity = new ItemEntity(thisEntity.getWorld(), thisEntity.getX(), thisEntity.getY(), thisEntity.getZ(), stack);
+                        itemEntity.setOwner(attacker.getUuid());
+                        FollowingItem data = (FollowingItem)itemEntity;
+                        data.vibral$setTargetEntity(attacker);
+                        data.vibral$setFollowTicks(collectingEnchantmentLevel * 100);
+                        data.vibral$setFollowStrength((collectingEnchantmentLevel == 1 ? 0.02f : 0) + collectingEnchantmentLevel / 20.0f);
+                        data.vibral$setFollowDistance(collectingEnchantmentLevel * 20);
+                        itemEntity.setToDefaultPickupDelay();
+                        thisEntity.getWorld().spawnEntity(itemEntity);
+                    }
+                });
+            }
+        }
     }
 
     @Unique

@@ -4,13 +4,20 @@ import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.zadezapper.vibral.accessor.FollowingItem;
+import net.zadezapper.vibral.effect.ModEffects;
+import net.zadezapper.vibral.enchantment.ModEnchantments;
 import net.zadezapper.vibral.item.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -18,18 +25,39 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.function.Supplier;
+
 @Mixin(value = Block.class, priority = 4096)
 public abstract class BlockMixin {
 
     @Inject(at = @At("HEAD"), method = "dropStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V", cancellable = true)
     private static void dropStacks(BlockState state, World world, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack tool, CallbackInfo callbackInfo) {
-        if (isHoldingVibralTool(entity) && world instanceof ServerWorld) {
+        int collectingEnchantmentLevel = EnchantmentHelper.getLevel(
+                world.getRegistryManager()
+                        .get(RegistryKeys.ENCHANTMENT)
+                        .getEntry(ModEnchantments.COLLECTING)
+                        .orElseThrow(),
+                tool
+        );
+        if (collectingEnchantmentLevel > 0 && world instanceof ServerWorld) {
             callbackInfo.cancel();
             Block.getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, tool).forEach((stack) -> {
                 if (entity instanceof ServerPlayerEntity) {
-                    if (!((ServerPlayerEntity) entity).getInventory().insertStack(stack)) {
-                        Block.dropStack(world, pos, stack); // Or another method to spawn an item that would be easier for custom behavior
-                    }
+                    double random = MathHelper.nextDouble(world.random, -0.25, 0.25);
+                    publicDropStack(world, () -> {
+                        ItemEntity item = new ItemEntity(world,
+                                (double)pos.getX() + 0.5 + random,
+                                (double)pos.getY() + 0.5 + random - (double)EntityType.ITEM.getHeight() / 2.0,
+                                (double)pos.getZ() + 0.5 + random,
+                                stack);
+                        item.setOwner(entity.getUuid());
+                        FollowingItem data = (FollowingItem)item;
+                        data.vibral$setTargetEntity(entity);
+                        data.vibral$setFollowTicks(collectingEnchantmentLevel * 100);
+                        data.vibral$setFollowStrength((collectingEnchantmentLevel == 1 ? 0.02f : 0) + collectingEnchantmentLevel / 20.0f);
+                        data.vibral$setFollowDistance(collectingEnchantmentLevel * 20);
+                        return item;
+                    }, stack);
                 }
             });
             state.onStacksDropped((ServerWorld)world, pos, tool, true);
@@ -44,7 +72,16 @@ public abstract class BlockMixin {
             method = "spawnBreakParticles"
     )
     private boolean skip(World instance, PlayerEntity playerEntity, int eventId, BlockPos blockPos, int data) {
-        return !isWearingFullVibralArmorSet(playerEntity);
+        return !(isWearingFullVibralArmorSet(playerEntity) || playerEntity.hasStatusEffect(ModEffects.SILENCE));
+    }
+
+    @Unique
+    private static void publicDropStack(World world, Supplier<ItemEntity> itemEntitySupplier, ItemStack stack) {
+        if (!world.isClient && !stack.isEmpty() && world.getGameRules().getBoolean(GameRules.DO_TILE_DROPS)) {
+            ItemEntity itemEntity = itemEntitySupplier.get();
+            itemEntity.setToDefaultPickupDelay();
+            world.spawnEntity(itemEntity);
+        }
     }
 
     @Unique

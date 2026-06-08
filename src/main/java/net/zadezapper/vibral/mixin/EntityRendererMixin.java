@@ -7,16 +7,15 @@ import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.registry.RegistryKeys;
 import net.minecraft.text.Text;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.RaycastContext;
-import net.zadezapper.vibral.item.ModItems;
+import net.zadezapper.vibral.enchantment.ModEnchantments;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -24,17 +23,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import static net.zadezapper.vibral.block.ModBlocks.VIBRAL_PANEL;
-import static net.zadezapper.vibral.block.ModBlocks.VIBRAL_BLOCK;
 
 @Mixin(value = EntityRenderer.class, priority = 2048)
-public abstract class EntityRendererMixin<entity extends Entity> {
+public abstract class EntityRendererMixin {
 
     @Inject(at = @At("HEAD"), method = "render", cancellable = true)
-    private void render(entity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo callbackInfo) {
-        if (entity instanceof PlayerEntity) {
-            if (isWearingFullVibralArmorSet(entity)) {
-                callbackInfo.cancel();
-            }
+    private void render(Entity entity, float yaw, float tickDelta, MatrixStack matrices, VertexConsumerProvider vertexConsumers, int light, CallbackInfo callbackInfo) {
+        if (getFullArmorObscuringEnchantmentLevel(entity) >= 1) {
+            callbackInfo.cancel();
         }
     }
 
@@ -48,25 +44,23 @@ public abstract class EntityRendererMixin<entity extends Entity> {
         );
         Block hit = entity.getWorld().getBlockState(entity.getWorld().raycast(context).getBlockPos()).getBlock();
 
-        if (hit == VIBRAL_BLOCK || hit == VIBRAL_PANEL) {
+        if (hit == VIBRAL_PANEL) {
             callbackInfo.cancel();
         }
     }
 
-
     @Unique
-    private boolean isWearingFullVibralArmorSet(Entity entity) {
+    private int getFullArmorObscuringEnchantmentLevel(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            int headLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.HEAD));
+            int chestLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.CHEST));
+            int legsLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.LEGS));
+            int feetLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.FEET));
 
-        ItemStack headItemStack = ((PlayerEntity) entity).getEquippedStack(EquipmentSlot.HEAD);
-        ItemStack chestItemStack = ((PlayerEntity) entity).getEquippedStack(EquipmentSlot.CHEST);
-        ItemStack legsItemStack = ((PlayerEntity) entity).getEquippedStack(EquipmentSlot.LEGS);
-        ItemStack feetItemStack = ((PlayerEntity) entity).getEquippedStack(EquipmentSlot.FEET);
-
-        return (headItemStack.isOf(ModItems.VIBRAL_HELMET)
-                && chestItemStack.isOf(ModItems.VIBRAL_CHESTPLATE)
-                && legsItemStack.isOf(ModItems.VIBRAL_LEGGINGS)
-                && feetItemStack.isOf(ModItems.VIBRAL_BOOTS));
-
+            return Math.min(Math.min(headLevel, chestLevel), Math.min(legsLevel, feetLevel));
+        } else {
+            return -1;
+        }
     }
 }
 

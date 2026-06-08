@@ -1,7 +1,9 @@
 package net.zadezapper.vibral.mixin;
 
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.ItemPlacementContext;
@@ -9,6 +11,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -25,7 +28,8 @@ public abstract class BlockItemMixin {
     method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;"
 )
 private boolean skip(World world, PlayerEntity source, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch, ItemPlacementContext context) {
-    return !isWearingFullVibralArmorSet(((BlockItem)(Object)this).getPlacementContext(context).getPlayer());
+    LivingEntity entity = ((BlockItem)(Object)this).getPlacementContext(context).getPlayer();
+    return !(isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
 }
 
     @Unique

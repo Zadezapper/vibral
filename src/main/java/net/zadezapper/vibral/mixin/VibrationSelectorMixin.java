@@ -4,12 +4,10 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.event.Vibrations;
 import net.minecraft.world.event.listener.Vibration;
 import net.minecraft.world.event.listener.VibrationSelector;
+import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.item.ModItems;
-import net.zadezapper.vibral.sound.ModSoundEvents;
-import org.apache.commons.lang3.tuple.Pair;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -23,7 +21,7 @@ public abstract class VibrationSelectorMixin {
         Entity vibrationSource = vibration.entity();
 
         if (vibrationSource != null) {
-            if (isWearingFullVibralArmorSet(vibrationSource)) {
+            if (isWearingFullVibralArmorSet(vibrationSource) || (vibrationSource instanceof LivingEntity livingEntity && livingEntity.hasStatusEffect(ModEffects.SILENCE))) {
                 callbackInfoReturnable.setReturnValue(false);
                 callbackInfoReturnable.cancel();
             }
