@@ -16,6 +16,7 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.zadezapper.vibral.accessor.FollowingItem;
+import net.zadezapper.vibral.block.entity.EchoBlockEntity;
 import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.enchantment.ModEnchantments;
 import net.zadezapper.vibral.item.ModItems;
@@ -32,35 +33,66 @@ public abstract class BlockMixin {
 
     @Inject(at = @At("HEAD"), method = "dropStacks(Lnet/minecraft/block/BlockState;Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/entity/BlockEntity;Lnet/minecraft/entity/Entity;Lnet/minecraft/item/ItemStack;)V", cancellable = true)
     private static void dropStacks(BlockState state, World world, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack tool, CallbackInfo callbackInfo) {
-        int collectingEnchantmentLevel = EnchantmentHelper.getLevel(
-                world.getRegistryManager()
-                        .get(RegistryKeys.ENCHANTMENT)
-                        .getEntry(ModEnchantments.COLLECTING)
-                        .orElseThrow(),
-                tool
-        );
-        if (collectingEnchantmentLevel > 0 && world instanceof ServerWorld) {
-            callbackInfo.cancel();
-            Block.getDroppedStacks(state, (ServerWorld)world, pos, blockEntity, entity, tool).forEach((stack) -> {
-                if (entity instanceof ServerPlayerEntity) {
-                    double random = MathHelper.nextDouble(world.random, -0.25, 0.25);
-                    publicDropStack(world, () -> {
-                        ItemEntity item = new ItemEntity(world,
-                                (double)pos.getX() + 0.5 + random,
-                                (double)pos.getY() + 0.5 + random - (double)EntityType.ITEM.getHeight() / 2.0,
-                                (double)pos.getZ() + 0.5 + random,
-                                stack);
-                        item.setOwner(entity.getUuid());
-                        FollowingItem data = (FollowingItem)item;
-                        data.vibral$setTargetEntity(entity);
-                        data.vibral$setFollowTicks(collectingEnchantmentLevel * 100);
-                        data.vibral$setFollowStrength((collectingEnchantmentLevel == 1 ? 0.02f : 0) + collectingEnchantmentLevel / 20.0f);
-                        data.vibral$setFollowDistance(collectingEnchantmentLevel * 20);
-                        return item;
-                    }, stack);
-                }
-            });
-            state.onStacksDropped((ServerWorld)world, pos, tool, true);
+        if (world instanceof ServerWorld serverWorld) {
+            int collectingEnchantmentLevel = EnchantmentHelper.getLevel(
+                    world.getRegistryManager()
+                            .get(RegistryKeys.ENCHANTMENT)
+                            .getEntry(ModEnchantments.COLLECTING)
+                            .orElseThrow(),
+                    tool
+            );
+            int echoMiningEnchantmentLevel = EnchantmentHelper.getLevel(
+                    world.getRegistryManager()
+                            .get(RegistryKeys.ENCHANTMENT)
+                            .getEntry(ModEnchantments.ECHO_MINING)
+                            .orElseThrow(),
+                    tool
+            );
+            if (echoMiningEnchantmentLevel > 0) {
+                callbackInfo.cancel();
+            }
+            if (collectingEnchantmentLevel > 0) {
+                callbackInfo.cancel();
+                Block.getDroppedStacks(state, serverWorld, pos, blockEntity, entity, tool).forEach((stack) -> {
+                    if (entity instanceof ServerPlayerEntity) {
+                        double random = MathHelper.nextDouble(world.random, -0.25, 0.25);
+                        publicDropStack(world, () -> {
+                            ItemEntity item = new ItemEntity(world,
+                                    (double) pos.getX() + 0.5 + random,
+                                    (double) pos.getY() + 0.5 + random - (double) EntityType.ITEM.getHeight() / 2.0,
+                                    (double) pos.getZ() + 0.5 + random,
+                                    stack);
+                            item.setOwner(entity.getUuid());
+                            FollowingItem data = (FollowingItem) item;
+                            data.vibral$setTargetEntity(entity);
+                            data.vibral$setFollowTicks(collectingEnchantmentLevel * 100);
+                            data.vibral$setFollowStrength((collectingEnchantmentLevel == 1 ? 0.02f : 0) + collectingEnchantmentLevel / 20.0f);
+                            data.vibral$setFollowDistance(collectingEnchantmentLevel * 20);
+                            return item;
+                        }, stack);
+                    }
+                });
+                state.onStacksDropped(serverWorld, pos, tool, true);
+            }
+        }
+    }
+
+    @Inject(at = @At(value = "HEAD"), method = "afterBreak")
+    private static void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState originalBlock, BlockEntity blockEntity, ItemStack tool, CallbackInfo ci) {
+        if (world instanceof ServerWorld serverWorld) {
+            int echoMiningEnchantmentLevel = EnchantmentHelper.getLevel(
+                    world.getRegistryManager()
+                            .get(RegistryKeys.ENCHANTMENT)
+                            .getEntry(ModEnchantments.ECHO_MINING)
+                            .orElseThrow(),
+                    tool
+            );
+            if (echoMiningEnchantmentLevel > 0) {
+                EchoBlockEntity.create(serverWorld, pos, originalBlock,
+                        blockEntity != null ? blockEntity.createNbtWithIdentifyingData(serverWorld.getRegistryManager()) : null,
+                        Math.max(3, (int)(130 * Math.pow(0.5, echoMiningEnchantmentLevel - 1)))
+                );
+            }
         }
     }
 

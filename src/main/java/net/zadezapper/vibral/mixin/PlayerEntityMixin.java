@@ -3,16 +3,22 @@ package net.zadezapper.vibral.mixin;
 import com.llamalad7.mixinextras.injector.v2.WrapWithCondition;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.particle.ParticleEffect;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
 import net.zadezapper.vibral.effect.ModEffects;
+import net.zadezapper.vibral.enchantment.ModEnchantments;
 import net.zadezapper.vibral.item.ModItems;
 import net.zadezapper.vibral.sound.ModSoundEvents;
 import org.spongepowered.asm.mixin.Mixin;
@@ -141,6 +147,50 @@ public abstract class PlayerEntityMixin {
         return !(isHoldingVibralTool(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
     }
 
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/player/PlayerEntity;spawnSweepAttackParticles()V"
+            ),
+            method = "attack"
+    )
+    private boolean skip3(PlayerEntity instance) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/player/PlayerEntity;addCritParticles(Lnet/minecraft/entity/Entity;)V"
+            ),
+            method = "attack"
+    )
+    private boolean skip4(PlayerEntity instance, Entity target) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/entity/player/PlayerEntity;addEnchantedHitParticles(Lnet/minecraft/entity/Entity;)V"
+            ),
+            method = "attack"
+    )
+    private boolean skip5(PlayerEntity instance, Entity target) {
+        return !(getFullArmorObscuringEnchantmentLevel(instance) >= 2 && instance.hasStatusEffect(StatusEffects.INVISIBILITY) || getFullArmorObscuringEnchantmentLevel(target) >= 2 && target instanceof LivingEntity livingTarget && livingTarget.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/world/ServerWorld;spawnParticles(Lnet/minecraft/particle/ParticleEffect;DDDIDDDD)I"
+            ),
+            method = "attack"
+    )
+    private boolean skip6(ServerWorld instance, ParticleEffect particle, double x, double y, double z, int count, double deltaX, double deltaY, double deltaZ, double speed) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
     @Unique
     private boolean isWearingFullVibralArmorSet(Entity entity) {
         if (entity instanceof LivingEntity) {
@@ -167,6 +217,20 @@ public abstract class PlayerEntityMixin {
             );
         } else {
             return false;
+        }
+    }
+
+    @Unique
+    private int getFullArmorObscuringEnchantmentLevel(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            int headLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.HEAD));
+            int chestLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.CHEST));
+            int legsLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.LEGS));
+            int feetLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.FEET));
+
+            return Math.min(Math.min(headLevel, chestLevel), Math.min(legsLevel, feetLevel));
+        } else {
+            return -1;
         }
     }
 }

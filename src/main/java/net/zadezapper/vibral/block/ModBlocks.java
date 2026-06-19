@@ -11,6 +11,7 @@ import net.minecraft.registry.Registry;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.util.Identifier;
 import net.zadezapper.vibral.Vibral;
+import net.zadezapper.vibral.block.advanced.EchoBlock;
 import net.zadezapper.vibral.block.advanced.RawVibralBlock;
 import net.zadezapper.vibral.block.advanced.VibralPanelBlock;
 
@@ -39,6 +40,12 @@ public class ModBlocks {
                     .strength(1f)
                     .requiresTool()
                     .sounds(BlockSoundGroup.METAL))
+    );
+    public static final Block ECHO = registerBlock( "echo",
+            new EchoBlock(AbstractBlock.Settings.create()
+                    .noCollision()
+                    .strength(-1f)
+                    .dropsNothing())
     );
 
     private static Block registerBlock(String name, Block block) {

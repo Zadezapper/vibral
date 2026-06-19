@@ -12,6 +12,7 @@
     "EntityRendererMixin",
     "ItemEntityMixin",
     "LivingEntityMixin",
+    "MobEntityMixin",
     "PersistentProjectileEntityMixin",
     "PlayerEntityMixin",
     "VibrationSelectorMixin"
@@ -25,6 +26,7 @@
   "client": [
     "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
-    "ClientPlayNetworkHandlerMixin"
+    "ClientPlayNetworkHandlerMixin",
+    "EntityRenderDispatcherMixin"
   ]
 }

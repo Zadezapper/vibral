@@ -7,11 +7,14 @@ import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.data.TrackedData;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.context.LootContextParameterSet;
 import net.minecraft.loot.context.LootContextParameters;
 import net.minecraft.loot.context.LootContextTypes;
+import net.minecraft.particle.ParticleEffect;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;
 import net.minecraft.server.world.ServerWorld;
@@ -22,6 +25,7 @@ import net.zadezapper.vibral.accessor.FollowingItem;
 import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.enchantment.ModEnchantments;
 import net.zadezapper.vibral.item.ModItems;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -29,13 +33,31 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Mixin(value = LivingEntity.class, priority = 4096)
 public abstract class LivingEntityMixin {
     @Shadow
     protected PlayerEntity attackingPlayer;
+    @Final
+    @Shadow
+    private static TrackedData<List<ParticleEffect>> POTION_SWIRLS;
+    @Final
+    @Shadow
+    private static TrackedData<Boolean> POTION_SWIRLS_AMBIENT;
 
     @Unique
-    public LivingEntity entity = ((LivingEntity)(Object)this);
+    private final LivingEntity entity = ((LivingEntity)(Object)this);
+
+    @Inject(at = @At("HEAD"), method = "updatePotionSwirls", cancellable = true)
+    private void updatePotionSwirls(CallbackInfo callbackInfo) {
+        if (getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY)) {
+            callbackInfo.cancel();
+            entity.getDataTracker().set(POTION_SWIRLS, new ArrayList<>());
+            entity.getDataTracker().set(POTION_SWIRLS_AMBIENT, false);
+        }
+    }
 
     @WrapWithCondition(
             at = @At(
@@ -46,6 +68,61 @@ public abstract class LivingEntityMixin {
     )
     private boolean skip(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
         return !(isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"
+            ),
+            method = "baseTick"
+    )
+    private boolean skip2(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"
+            ),
+            method = "tickStatusEffects"
+    )
+    private boolean skip3(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"
+            ),
+            method = "handleStatus"
+    )
+    private boolean skip4(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"
+            ),
+            method = "addDeathParticles"
+    )
+    private boolean skip5(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+    }
+
+    @WrapWithCondition(
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/World;addParticle(Lnet/minecraft/particle/ParticleEffect;DDDDDD)V"
+            ),
+            method = "spawnItemParticles"
+    )
+    private boolean skip6(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @Inject(at = @At(value = "HEAD"), method = "dropLoot", cancellable = true)
@@ -118,6 +195,20 @@ public abstract class LivingEntityMixin {
             );
         } else {
             return false;
+        }
+    }
+
+    @Unique
+    private int getFullArmorObscuringEnchantmentLevel(Entity entity) {
+        if (entity instanceof LivingEntity livingEntity) {
+            int headLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.HEAD));
+            int chestLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.CHEST));
+            int legsLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.LEGS));
+            int feetLevel = EnchantmentHelper.getLevel(livingEntity.getWorld().getRegistryManager().get(RegistryKeys.ENCHANTMENT).getEntry(ModEnchantments.OBSCURING).orElseThrow(),livingEntity.getEquippedStack(EquipmentSlot.FEET));
+
+            return Math.min(Math.min(headLevel, chestLevel), Math.min(legsLevel, feetLevel));
+        } else {
+            return -1;
         }
     }
 }

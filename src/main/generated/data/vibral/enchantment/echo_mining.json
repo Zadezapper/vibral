@@ -1,0 +1,21 @@
+{
+  "anvil_cost": 1,
+  "description": {
+    "translate": "enchantment.vibral.echo_mining"
+  },
+  "max_cost": {
+    "base": 19,
+    "per_level_above_first": 11
+  },
+  "max_level": 3,
+  "min_cost": {
+    "base": 8,
+    "per_level_above_first": 10
+  },
+  "primary_items": "#vibral:vibral_tools",
+  "slots": [
+    "mainhand"
+  ],
+  "supported_items": "#vibral:vibral_tools",
+  "weight": 8
+}
