@@ -24,9 +24,12 @@
     "requireAnnotations": true
   },
   "client": [
+    "ArmorFeatureRendererMixin",
     "ClientPlayerEntityMixin",
     "ClientPlayerInteractionManagerMixin",
     "ClientPlayNetworkHandlerMixin",
-    "EntityRenderDispatcherMixin"
+    "EntityRenderDispatcherMixin",
+    "LivingEntityRendererMixin",
+    "PlayerEntityRendererMixin"
   ]
 }

@@ -193,11 +193,13 @@ public Packet<ClientPlayPacketListener> toUpdatePacket() {
     }
 
     private void logExecution(World world, String function) {
+        /*
         Vibral.LOGGER.info("{} Ran", function);
         Vibral.LOGGER.info("    World Type: {}", world == null ? "null" : world instanceof ServerWorld ? "Server" : "Client");
         Vibral.LOGGER.info("    Environment Type: {}", world == null ? "null" : !world.isClient ? "Server" : "Client");
         Vibral.LOGGER.info("    StoredBlock: {}", storedBlock == null ? "null" : storedBlock.getBlock().getName().getString());
         Vibral.LOGGER.info("    StoredBlockNbt: {}", storedNbt == null ? "null" : storedNbt);
         Vibral.LOGGER.info("    Cached State: {}", getCachedState());
+        */
     }
 }

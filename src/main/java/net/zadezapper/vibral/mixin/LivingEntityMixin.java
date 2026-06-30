@@ -22,6 +22,7 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.world.World;
 import net.zadezapper.vibral.accessor.FollowingItem;
+import net.zadezapper.vibral.accessor.SneakTicker;
 import net.zadezapper.vibral.effect.ModEffects;
 import net.zadezapper.vibral.enchantment.ModEnchantments;
 import net.zadezapper.vibral.item.ModItems;
@@ -37,7 +38,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Mixin(value = LivingEntity.class, priority = 4096)
-public abstract class LivingEntityMixin {
+public abstract class LivingEntityMixin implements SneakTicker {
     @Shadow
     protected PlayerEntity attackingPlayer;
     @Final
@@ -48,14 +49,35 @@ public abstract class LivingEntityMixin {
     private static TrackedData<Boolean> POTION_SWIRLS_AMBIENT;
 
     @Unique
-    private final LivingEntity entity = ((LivingEntity)(Object)this);
+    private int vibral$sneakingTicks;
+
+    @Override
+    public int vibral$getSneakingTicks() {
+        return vibral$sneakingTicks;
+    }
+
+    @Override
+    public void vibral$setSneakingTicks(int ticks) {
+        vibral$sneakingTicks = ticks;
+    }
 
     @Inject(at = @At("HEAD"), method = "updatePotionSwirls", cancellable = true)
     private void updatePotionSwirls(CallbackInfo callbackInfo) {
-        if (getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY)) {
+        LivingEntity self = (LivingEntity)(Object)this;
+        if (getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY)) {
             callbackInfo.cancel();
-            entity.getDataTracker().set(POTION_SWIRLS, new ArrayList<>());
-            entity.getDataTracker().set(POTION_SWIRLS_AMBIENT, false);
+            self.getDataTracker().set(POTION_SWIRLS, new ArrayList<>());
+            self.getDataTracker().set(POTION_SWIRLS_AMBIENT, false);
+        }
+    }
+
+    @Inject(at = @At("TAIL"), method = "tick")
+    private void tick(CallbackInfo callbackInfo) {
+        LivingEntity self = (LivingEntity)(Object)this;
+        if (self.isSneaking()) {
+            vibral$sneakingTicks++;
+        } else {
+            vibral$sneakingTicks = 0;
         }
     }
 
@@ -67,7 +89,8 @@ public abstract class LivingEntityMixin {
             method = "eatFood"
     )
     private boolean skip(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        return !(isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(ModEffects.SILENCE));
+        LivingEntity self = (LivingEntity)(Object)this;
+        return !(isWearingFullVibralArmorSet(self) || self.hasStatusEffect(ModEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -78,7 +101,8 @@ public abstract class LivingEntityMixin {
             method = "baseTick"
     )
     private boolean skip2(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        LivingEntity self = (LivingEntity)(Object)this;
+        return !(getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -89,7 +113,8 @@ public abstract class LivingEntityMixin {
             method = "tickStatusEffects"
     )
     private boolean skip3(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        LivingEntity self = (LivingEntity)(Object)this;
+        return !(getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -100,7 +125,8 @@ public abstract class LivingEntityMixin {
             method = "handleStatus"
     )
     private boolean skip4(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        LivingEntity self = (LivingEntity)(Object)this;
+        return !(getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -111,7 +137,8 @@ public abstract class LivingEntityMixin {
             method = "addDeathParticles"
     )
     private boolean skip5(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        LivingEntity self = (LivingEntity)(Object)this;
+        return !(getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -122,7 +149,8 @@ public abstract class LivingEntityMixin {
             method = "spawnItemParticles"
     )
     private boolean skip6(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
-        return !(getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        LivingEntity self = (LivingEntity)(Object)this;
+        return !(getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @Inject(at = @At(value = "HEAD"), method = "dropLoot", cancellable = true)
