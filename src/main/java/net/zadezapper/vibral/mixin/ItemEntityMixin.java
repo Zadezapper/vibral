@@ -74,11 +74,11 @@ public abstract class ItemEntityMixin implements FollowingItem {
     }
 
     @WrapOperation(
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/block/Block;getSlipperiness()F"
-            ),
-            method = "tick"
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/block/Block;getSlipperiness()F"
+        ),
+        method = "tick"
     )
     private float getSlipperiness(Block instance, Operation<Float> original) {
         if (vibral$targetEntity != null && vibral$followTicks-- > 0) {

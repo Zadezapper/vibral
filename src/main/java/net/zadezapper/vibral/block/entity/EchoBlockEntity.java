@@ -17,7 +17,7 @@ import net.minecraft.world.World;
 import net.zadezapper.vibral.Vibral;
 import org.jetbrains.annotations.Nullable;
 
-import static net.zadezapper.vibral.block.ModBlocks.ECHO;
+import static net.zadezapper.vibral.block.VibralBlocks.ECHO;
 
 public class EchoBlockEntity extends BlockEntity {
     private BlockState storedBlock;
@@ -34,7 +34,6 @@ public class EchoBlockEntity extends BlockEntity {
     public void setPlayerPassed(boolean passed) {
         playerPassed = passed;
         markDirty();
-        logExecution(this.world, "setPlayerPassed()");
     }
 
     public BlockState getStoredBlock() {
@@ -44,7 +43,6 @@ public class EchoBlockEntity extends BlockEntity {
     public void setStoredBlock(BlockState state) {
         storedBlock = state;
         markDirty();
-        logExecution(this.world, "setStoredBlock()");
     }
 
     @Nullable public NbtCompound getStoredNbt() {
@@ -54,7 +52,6 @@ public class EchoBlockEntity extends BlockEntity {
     public void setStoredNbt(@Nullable NbtCompound nbt) {
         storedNbt = nbt;
         markDirty();
-        logExecution(this.world, "setStoredNbt()");
     }
 
     public int getRestoreTicks() {
@@ -68,12 +65,10 @@ public class EchoBlockEntity extends BlockEntity {
     public void setRestoreTicks(int ticks) {
         this.restoreTicks = ticks;
         markDirty();
-        logExecution(this.world, "setRestoreTicks()");
     }
 
     public EchoBlockEntity(BlockPos pos, BlockState state) {
-        super(ModBlockEntities.ECHO_BE, pos, state);
-        logExecution(this.world, "Constructor");
+        super(VibralBlockEntities.ECHO_BE, pos, state);
     }
 
     public static EchoBlockEntity create(ServerWorld world, BlockPos pos, BlockState originalBlock, @Nullable NbtCompound originalNbt, int restoreTicks) {
@@ -87,30 +82,24 @@ public class EchoBlockEntity extends BlockEntity {
             world.updateListeners(pos, echoBlockEntity.getCachedState(), echoBlockEntity.getCachedState(), Block.NOTIFY_ALL);
             world.getChunkManager().markForUpdate(pos);
             world.getServer().execute(() ->
-                    world.getChunkManager().markForUpdate(pos)
+                world.getChunkManager().markForUpdate(pos)
             );
             echoBlockEntity.needsSync = true;
-            echoBlockEntity.logExecution(world, "create()");
             return echoBlockEntity;
         }
         return null;
     }
-
     @Override
     protected void addComponents(ComponentMap.Builder componentMapBuilder) {
         super.addComponents(componentMapBuilder);
-
-        logExecution(this.world, "addComponents()");
     }
 
     @Override
     protected void writeNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registries) {
         super.writeNbt(nbt, registries);
-
         nbt.putInt("Age", age);
         nbt.putInt("RestoreTicks", restoreTicks);
         nbt.putBoolean("PlayerPassed", playerPassed);
-
         if (storedBlock != null) {
             BlockState.CODEC.encodeStart(
                     registries.getOps(net.minecraft.nbt.NbtOps.INSTANCE),
@@ -118,20 +107,15 @@ public class EchoBlockEntity extends BlockEntity {
             ).result().ifPresent(encoded ->
                     nbt.put("StoredBlock", encoded));
         }
-
         if (storedNbt != null) {
             nbt.put("StoredBlockNbt", storedNbt.copy());
         }
-        logExecution(this.world, "writeNbt()");
-
         Vibral.LOGGER.info("writeNbt() output: {}", nbt);
     }
 
     @Override
     protected void readComponents(ComponentsAccess components) {
         super.readComponents(components);
-
-        logExecution(this.world, "readComponents()");
     }
 
     @Override
@@ -142,7 +126,6 @@ public class EchoBlockEntity extends BlockEntity {
         playerPassed = nbt.getBoolean("PlayerPassed");
         storedBlock = nbt.contains("StoredBlock") ? BlockState.CODEC.parse(registries.getOps(net.minecraft.nbt.NbtOps.INSTANCE), nbt.get("StoredBlock")).result().orElse(null) : null;
         storedNbt = nbt.contains("StoredBlockNbt") ? nbt.getCompound("StoredBlockNbt") : null;
-        logExecution(this.world, "readNbt()");
     }
 
     public static void tick(World world, BlockPos pos, BlockState state, EchoBlockEntity blockEntity) {
@@ -154,9 +137,9 @@ public class EchoBlockEntity extends BlockEntity {
                 }
             }
             boolean playerInside = !world.getEntitiesByClass(
-                    Entity.class,
-                    new Box(pos),
-                    entity -> true
+                Entity.class,
+                new Box(pos),
+                entity -> true
             ).isEmpty();
             if (playerInside && !blockEntity.playerPassed) {
                 blockEntity.setPlayerPassed(true);
@@ -179,27 +162,14 @@ public class EchoBlockEntity extends BlockEntity {
         }
     }
 
-@Nullable
-@Override
-public Packet<ClientPlayPacketListener> toUpdatePacket() {
-    logExecution(this.world, "toUpdatePacket()");
-    return BlockEntityUpdateS2CPacket.create(this);
-}
+    @Nullable
+    @Override
+    public Packet<ClientPlayPacketListener> toUpdatePacket() {
+        return BlockEntityUpdateS2CPacket.create(this);
+    }
 
     @Override
     public NbtCompound toInitialChunkDataNbt(RegistryWrapper.WrapperLookup registryLookup) {
-        logExecution(this.world, "toInitialChunkDataNbt");
         return createNbt(registryLookup);
-    }
-
-    private void logExecution(World world, String function) {
-        /*
-        Vibral.LOGGER.info("{} Ran", function);
-        Vibral.LOGGER.info("    World Type: {}", world == null ? "null" : world instanceof ServerWorld ? "Server" : "Client");
-        Vibral.LOGGER.info("    Environment Type: {}", world == null ? "null" : !world.isClient ? "Server" : "Client");
-        Vibral.LOGGER.info("    StoredBlock: {}", storedBlock == null ? "null" : storedBlock.getBlock().getName().getString());
-        Vibral.LOGGER.info("    StoredBlockNbt: {}", storedNbt == null ? "null" : storedNbt);
-        Vibral.LOGGER.info("    Cached State: {}", getCachedState());
-        */
     }
 }

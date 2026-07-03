@@ -5,7 +5,9 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.*;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.registry.RegistryKeys;
@@ -17,9 +19,9 @@ import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.zadezapper.vibral.accessor.FollowingItem;
 import net.zadezapper.vibral.block.entity.EchoBlockEntity;
-import net.zadezapper.vibral.effect.ModEffects;
-import net.zadezapper.vibral.enchantment.ModEnchantments;
-import net.zadezapper.vibral.item.ModItems;
+import net.zadezapper.vibral.effect.VibralEffects;
+import net.zadezapper.vibral.enchantment.VibralEnchantments;
+import net.zadezapper.vibral.util.StealthHelper;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -35,18 +37,18 @@ public abstract class BlockMixin {
     private static void dropStacks(BlockState state, World world, BlockPos pos, BlockEntity blockEntity, Entity entity, ItemStack tool, CallbackInfo callbackInfo) {
         if (world instanceof ServerWorld serverWorld) {
             int collectingEnchantmentLevel = EnchantmentHelper.getLevel(
-                    world.getRegistryManager()
-                            .get(RegistryKeys.ENCHANTMENT)
-                            .getEntry(ModEnchantments.COLLECTING)
-                            .orElseThrow(),
-                    tool
+                world.getRegistryManager()
+                    .get(RegistryKeys.ENCHANTMENT)
+                    .getEntry(VibralEnchantments.COLLECTING)
+                    .orElseThrow(),
+                tool
             );
             int echoMiningEnchantmentLevel = EnchantmentHelper.getLevel(
-                    world.getRegistryManager()
-                            .get(RegistryKeys.ENCHANTMENT)
-                            .getEntry(ModEnchantments.ECHO_MINING)
-                            .orElseThrow(),
-                    tool
+                world.getRegistryManager()
+                    .get(RegistryKeys.ENCHANTMENT)
+                    .getEntry(VibralEnchantments.ECHO_MINING)
+                    .orElseThrow(),
+                tool
             );
             if (echoMiningEnchantmentLevel > 0) {
                 callbackInfo.cancel();
@@ -58,10 +60,10 @@ public abstract class BlockMixin {
                         double random = MathHelper.nextDouble(world.random, -0.25, 0.25);
                         publicDropStack(world, () -> {
                             ItemEntity item = new ItemEntity(world,
-                                    (double) pos.getX() + 0.5 + random,
-                                    (double) pos.getY() + 0.5 + random - (double) EntityType.ITEM.getHeight() / 2.0,
-                                    (double) pos.getZ() + 0.5 + random,
-                                    stack);
+                                (double) pos.getX() + 0.5 + random,
+                                (double) pos.getY() + 0.5 + random - (double) EntityType.ITEM.getHeight() / 2.0,
+                                (double) pos.getZ() + 0.5 + random,
+                                stack);
                             item.setOwner(entity.getUuid());
                             FollowingItem data = (FollowingItem) item;
                             data.vibral$setTargetEntity(entity);
@@ -81,30 +83,30 @@ public abstract class BlockMixin {
     private static void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState originalBlock, BlockEntity blockEntity, ItemStack tool, CallbackInfo ci) {
         if (world instanceof ServerWorld serverWorld) {
             int echoMiningEnchantmentLevel = EnchantmentHelper.getLevel(
-                    world.getRegistryManager()
-                            .get(RegistryKeys.ENCHANTMENT)
-                            .getEntry(ModEnchantments.ECHO_MINING)
-                            .orElseThrow(),
-                    tool
+                world.getRegistryManager()
+                    .get(RegistryKeys.ENCHANTMENT)
+                    .getEntry(VibralEnchantments.ECHO_MINING)
+                    .orElseThrow(),
+                tool
             );
             if (echoMiningEnchantmentLevel > 0) {
                 EchoBlockEntity.create(serverWorld, pos, originalBlock,
-                        blockEntity != null ? blockEntity.createNbtWithIdentifyingData(serverWorld.getRegistryManager()) : null,
-                        Math.max(3, (int)(130 * Math.pow(0.5, echoMiningEnchantmentLevel - 1)))
+                    blockEntity != null ? blockEntity.createNbtWithIdentifyingData(serverWorld.getRegistryManager()) : null,
+                    Math.max(3, (int)(130 * Math.pow(0.5, echoMiningEnchantmentLevel - 1)))
                 );
             }
         }
     }
 
     @WrapWithCondition(
-            at = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/World;syncWorldEvent(Lnet/minecraft/entity/player/PlayerEntity;ILnet/minecraft/util/math/BlockPos;I)V"
-            ),
-            method = "spawnBreakParticles"
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/World;syncWorldEvent(Lnet/minecraft/entity/player/PlayerEntity;ILnet/minecraft/util/math/BlockPos;I)V"
+        ),
+        method = "spawnBreakParticles"
     )
-    private boolean skip(World instance, PlayerEntity playerEntity, int eventId, BlockPos blockPos, int data) {
-        return !(isWearingFullVibralArmorSet(playerEntity) || playerEntity.hasStatusEffect(ModEffects.SILENCE));
+    private boolean shouldSyncWorldEvent(World instance, PlayerEntity playerEntity, int eventId, BlockPos blockPos, int data) {
+        return !(StealthHelper.isWearingFullVibralArmorSet(playerEntity) || playerEntity.hasStatusEffect(VibralEffects.SILENCE));
     }
 
     @Unique
@@ -113,35 +115,6 @@ public abstract class BlockMixin {
             ItemEntity itemEntity = itemEntitySupplier.get();
             itemEntity.setToDefaultPickupDelay();
             world.spawnEntity(itemEntity);
-        }
-    }
-
-    @Unique
-    private boolean isWearingFullVibralArmorSet(Entity entity) {
-        if (entity instanceof LivingEntity) {
-            return (
-                    ((LivingEntity) entity).getEquippedStack(EquipmentSlot.HEAD).isOf(ModItems.VIBRAL_HELMET)
-                            && ((LivingEntity) entity).getEquippedStack(EquipmentSlot.CHEST).isOf(ModItems.VIBRAL_CHESTPLATE)
-                            && ((LivingEntity) entity).getEquippedStack(EquipmentSlot.LEGS).isOf(ModItems.VIBRAL_LEGGINGS)
-                            && ((LivingEntity) entity).getEquippedStack(EquipmentSlot.FEET).isOf(ModItems.VIBRAL_BOOTS)
-            );
-        } else {
-            return false;
-        }
-    }
-
-    @Unique
-    private static boolean isHoldingVibralTool(Entity entity) {
-        if (entity instanceof LivingEntity) {
-            return (
-                    ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_SWORD)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_PICKAXE)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_AXE)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_SHOVEL)
-                            || ((LivingEntity) entity).getEquippedStack(EquipmentSlot.MAINHAND).isOf(ModItems.VIBRAL_HOE)
-            );
-        } else {
-            return false;
         }
     }
 }

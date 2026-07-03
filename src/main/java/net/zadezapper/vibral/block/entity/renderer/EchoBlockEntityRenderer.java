@@ -25,6 +25,7 @@ public class EchoBlockEntityRenderer implements BlockEntityRenderer<EchoBlockEnt
     private static final BlockRenderManager BLOCK_RENDER_MANAGER = MinecraftClient.getInstance().getBlockRenderManager();
 
     public EchoBlockEntityRenderer(BlockEntityRendererFactory.Context context) {
+
     }
 
     @Override
@@ -45,14 +46,14 @@ public class EchoBlockEntityRenderer implements BlockEntityRenderer<EchoBlockEnt
         matrices.translate(0.0, 0.0, 0.0);
 
         renderWithAlpha(
-                matrices.peek(),
-                vertexConsumers.getBuffer(RenderLayer.getTranslucent()),
-                storedBlock,
-                blockModel,
-                null,
-                0.039f, 0.333f, 0.400f, 2/3f,
-                LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE,
-                OverlayTexture.DEFAULT_UV
+            matrices.peek(),
+            vertexConsumers.getBuffer(RenderLayer.getTranslucent()),
+            storedBlock,
+            blockModel,
+            null,
+            0.039f, 0.333f, 0.400f, 2/3f,
+            LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE,
+            OverlayTexture.DEFAULT_UV
         );
 
         matrices.pop();
@@ -63,14 +64,14 @@ public class EchoBlockEntityRenderer implements BlockEntityRenderer<EchoBlockEnt
         matrices.translate(-0.5, -0.5, -0.5);
 
         renderWithAlpha(
-                matrices.peek(),
-                vertexConsumers.getBuffer(RenderLayer.getTranslucent()),
-                storedBlock,
-                blockModel,
-                MinecraftClient.getInstance().getBakedModelManager().getAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).getSprite(Identifier.of(Vibral.MOD_ID, "block/raw_vibral")),
-                0.039f, 0.333f, 0.400f, 0.35f,
-                LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE,
-                OverlayTexture.DEFAULT_UV
+            matrices.peek(),
+            vertexConsumers.getBuffer(RenderLayer.getTranslucent()),
+            storedBlock,
+            blockModel,
+            MinecraftClient.getInstance().getBakedModelManager().getAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).getSprite(Identifier.of(Vibral.MOD_ID, "block/raw_vibral")),
+            0.039f, 0.333f, 0.400f, 0.35f,
+            LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE,
+            OverlayTexture.DEFAULT_UV
         );
 
         matrices.pop();
@@ -87,14 +88,14 @@ public class EchoBlockEntityRenderer implements BlockEntityRenderer<EchoBlockEnt
         matrices.translate(-0.5, -0.5, -0.5);
 
         renderWithAlpha(
-                matrices.peek(),
-                vertexConsumers.getBuffer(RenderLayer.getTranslucent()),
-                storedBlock,
-                blockModel,
-                MinecraftClient.getInstance().getBakedModelManager().getAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).getSprite(Identifier.of(Vibral.MOD_ID, "block/echo")),
-                0.039f, 0.333f, 0.400f, alpha,
-                LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE,
-                OverlayTexture.DEFAULT_UV
+            matrices.peek(),
+            vertexConsumers.getBuffer(RenderLayer.getTranslucent()),
+            storedBlock,
+            blockModel,
+            MinecraftClient.getInstance().getBakedModelManager().getAtlas(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE).getSprite(Identifier.of(Vibral.MOD_ID, "block/echo")),
+            0.039f, 0.333f, 0.400f, alpha,
+            LightmapTextureManager.MAX_BLOCK_LIGHT_COORDINATE,
+            OverlayTexture.DEFAULT_UV
         );
 
         matrices.pop();
@@ -112,14 +113,14 @@ public class EchoBlockEntityRenderer implements BlockEntityRenderer<EchoBlockEnt
     private static void renderQuadsWithAlpha(MatrixStack.Entry entry, VertexConsumer vertexConsumer, float r, float g, float b, float a, List<BakedQuad> quads, @Nullable Sprite newSprite, int light, int overlay) {
         for (BakedQuad quad : quads) {
             vertexConsumer.quad(
-                    entry,
-                    newSprite == null ? quad : editQuadSprite(quad, newSprite),
-                    MathHelper.clamp(r, 0.0F, 1.0F),
-                    MathHelper.clamp(g, 0.0F, 1.0F),
-                    MathHelper.clamp(b, 0.0F, 1.0F),
-                    a,
-                    light,
-                    overlay
+                entry,
+                newSprite == null ? quad : editQuadSprite(quad, newSprite),
+                MathHelper.clamp(r, 0.0F, 1.0F),
+                MathHelper.clamp(g, 0.0F, 1.0F),
+                MathHelper.clamp(b, 0.0F, 1.0F),
+                a,
+                light,
+                overlay
             );
         }
     }
