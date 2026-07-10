@@ -15,6 +15,7 @@
     "MobEntityMixin",
     "PersistentProjectileEntityMixin",
     "PlayerEntityMixin",
+    "GrowCheckerMixin",
     "VibrationSelectorMixin"
   ],
   "injectors": {

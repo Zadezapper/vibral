@@ -2,6 +2,7 @@ package net.zadezapper.vibral.block;
 
 import com.mojang.serialization.MapCodec;
 import net.minecraft.block.*;
+import net.minecraft.block.entity.SculkSpreadManager;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.fluid.Fluids;
 import net.minecraft.item.ItemPlacementContext;
@@ -10,10 +11,12 @@ import net.minecraft.state.property.BooleanProperty;
 import net.minecraft.state.property.Properties;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.WorldAccess;
 
-public class RawVibralBlock extends MultifaceGrowthBlock implements Waterloggable {
+public class RawVibralBlock extends MultifaceGrowthBlock implements Waterloggable, SculkSpreadable {
     public static final MapCodec<RawVibralBlock> CODEC = createCodec(RawVibralBlock::new);
     private static final BooleanProperty WATERLOGGED = Properties.WATERLOGGED;
     private final LichenGrower grower = new LichenGrower(this);
@@ -62,5 +65,26 @@ public class RawVibralBlock extends MultifaceGrowthBlock implements Waterloggabl
     @Override
     public LichenGrower getGrower() {
         return this.grower;
+    }
+
+    @Override
+    public int spread(SculkSpreadManager.Cursor cursor, WorldAccess world, BlockPos catalystPos, Random random, SculkSpreadManager spreadManager, boolean shouldConvertToBlock) {
+        BlockState blockState;
+        for (Direction offsetDirection : Direction.values()) {
+            BlockPos pos = cursor.getPos().offset(offsetDirection);
+            BlockState originalState = world.getBlockState(pos);
+
+            if (originalState.getBlock() == Blocks.SCULK_VEIN) {
+                blockState = VibralBlocks.RAW_VIBRAL.getDefaultState();
+                for (Direction checkFaceDirection : Direction.values()) {
+                    blockState = blockState.with(SculkVeinBlock.getProperty(checkFaceDirection), originalState.get(SculkVeinBlock.getProperty(checkFaceDirection)));
+                }
+                if (world.setBlockState(pos, blockState, Block.NOTIFY_ALL)) {
+                    world.setBlockState(cursor.getPos(), originalState.with(WATERLOGGED, !world.getBlockState(cursor.getPos()).getFluidState().isEmpty()), Block.NOTIFY_ALL);
+                    return cursor.getCharge() -1;
+                }
+            }
+        }
+        return random.nextInt(spreadManager.getSpreadChance()) == 0 ? MathHelper.floor(cursor.getCharge() * 0.5F) : cursor.getCharge();
     }
 }

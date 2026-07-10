@@ -1,50 +1,50 @@
-/
-/summon tnt
-/
-/summon tnt
-/give @s mace
-/summon minecraft:skeleton
-/give @s minecraft:water_bucket
-/give @s vibral:vibral_sword
-/effect clear
-/setblock 61 63 -78
-/setblock 61 63 -78 air
-/give @s vibral:vibral_[]
-/give @s vibral:vibral_[unbreakable={}]
-/give @s vibral:vibral_helmet[unbreakable={}]
-/give @s vibral:vibral_chestplate[unbreakable={}]
-/give @s vibral:vibral_leggings[unbreakable={}]
-/give @s vibral:vibral_boots[unbreakable={}]
-/gamerule doDaylightCycle true
-/gamerule doWeatherCycleCycle true
-/gamerule doWeatherCycle true
-/gamerule doDaylightCycle false
-/gamerule doWeatherCycle false
-/give @s chest 2
-/summon husk
-/effect give @s minecraft:night_vision infinite 0 true
-/effect clear
-/time set midnight
-/tick freeze
-/data get block ~ ~ ~
-/enchant @s vibral:obscuring 3
-/fill 58 62 -31 58 62 -31
-/fill 58 62 -31 43 62 -46 dark_oak_planks
-/fill 58 62 -31
-/fill 58 62 -31 58 62 -46 air
-/fill 58 62 -31 58 62 -46 minecraft:dark_oak_planks
-/fill 58 62 -46
-/fill 58 62 -46 43 62 -46 oak_planks
-/fill 58 62 -46 43 62 -46 dark_oak_planks
-/fill 58 62 -31 43 62 -46 air
-/fill 58 62 -31 43 62 -46 minecraft:dark_oak_planks
-/fill 58 63 -30
-/fill 58 63 -30 42 63 -46 air replace sculk_vein
-/fill 58 62 -30
-/fill 58 62 -30 42 62 -46 deepslate_bricks replace minecraft:dark_oak_planks
 /fill 59 61 -29
 /fill 59 61 -29 42 61 -46 dark_oak_planks replace water
 /fill 59 61 -29 41 61 -47 dark_oak_planks replace water
 /fill 58 62 -30 42 62 -46 deepslate replace deepslate_bricks
 /fill 59 62 -29
 /tp 59 62 -29
+/effect clear
+/locate biome deep_dark
+/tp @s -423 -57 -940
+/effect give @s minecraft:night_vision
+/tp @s -423 -57 -940
+/effect give @s minecraft:night_vision infinite 0 true
+/tp 0 100 0
+/effect clear
+/tp 1100 0 1100
+/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 tnt replace minecraft:grass_block
+/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 tnt replace stone
+/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 tnt replace dirt
+/setblock 1087 66 1282 minecraft:redstone_block
+/effect give @s minecraft:night_vision
+/effect give @s minecraft:night_vision infinite 0 true
+/tp 0 100 0
+/effect clear
+/effect give @s minecraft:night_vision infinite 0 true
+/effect give @s minecraft:strength infinite 255 true
+/summon minecraft:zombie
+/summon minecraft:wither_skeleton
+/tick freeze
+/summon minecraft:wither_skeleton
+/tp @e[nbt={Health:0f}] Zadezapper
+/tp @e[nbt={Health:0}] Zadezapper
+/tick unfreeze
+/tick freeze
+/summon minecraft:wither_skeleton
+/tick unfreeze
+/fill 58 62 -30 58 62 -30
+/fill 58 62 -30 42 62 -46 spruce_planks replace stone
+/fill 58 62 -30 42 62 -46 air replace spruce_planks
+/fill ~10 ~10 ~10 ~-10 ~-10 ~-10 air replace sculk_vein
+/summon minecraft:zombie
+/setblock 52 64 -38 minecraft:moving_piston
+/summon minecraft:zombie
+/effect clear
+/tick freeze
+/tick step
+/tick rate 5
+/tick rate 20
+/locate biome minecraft:deep_dark
+/tp @s 994 -35 864
+/effect give @s minecraft:night_vision infinite 0 true
