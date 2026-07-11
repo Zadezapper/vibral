@@ -1,6 +1,7 @@
 {
-  "parent": "minecraft:block/cube_all",
+  "parent": "minecraft:block/cube_column",
   "textures": {
-    "all": "vibral:block/raw_vibral_block"
+    "end": "vibral:block/raw_vibral_block_end",
+    "side": "vibral:block/raw_vibral_block_end"
   }
 }
