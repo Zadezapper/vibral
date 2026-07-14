@@ -20,7 +20,7 @@ public abstract class ClientPlayerEntityMixin {
 
     @Inject(at = @At("HEAD"), method = "shouldSpawnSprintingParticles", cancellable = true)
     private void shouldSpawnSprintingParticles(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
-        if (StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY)) {
+        if (entity != null && StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY)) {
             callbackInfoReturnable.setReturnValue(false);
             callbackInfoReturnable.cancel();
         }

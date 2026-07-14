@@ -108,7 +108,7 @@ public abstract class PlayerEntityMixin {
         method = "eatFood"
     )
     private boolean shouldPlaySound(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        return !(StealthHelper.isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
+        return entity == null || !(StealthHelper.isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -119,7 +119,7 @@ public abstract class PlayerEntityMixin {
         method = "attack"
     )
     private boolean shouldPlaySound1(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
-        return !(StealthHelper.isHoldingVibralTool(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
+        return entity == null || !(StealthHelper.isHoldingVibralTool(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -130,7 +130,7 @@ public abstract class PlayerEntityMixin {
         method = "attack"
     )
     private boolean shouldPlaySound2(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category) {
-        return !(StealthHelper.isHoldingVibralTool(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
+        return entity == null || !(StealthHelper.isHoldingVibralTool(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -141,7 +141,7 @@ public abstract class PlayerEntityMixin {
         method = "attack"
     )
     private boolean shouldSpawnSweepAttackParticles(PlayerEntity instance) {
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return entity == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -152,7 +152,7 @@ public abstract class PlayerEntityMixin {
         method = "attack"
     )
     private boolean shouldAddCritParticles(PlayerEntity instance, Entity target) {
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return entity == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -163,7 +163,7 @@ public abstract class PlayerEntityMixin {
         method = "attack"
     )
     private boolean shouldAddEnchantedHitParticles(PlayerEntity instance, Entity target) {
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(instance) >= 2 && instance.hasStatusEffect(StatusEffects.INVISIBILITY) || StealthHelper.getFullArmorObscuringEnchantmentLevel(target) >= 2 && target instanceof LivingEntity livingTarget && livingTarget.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return instance == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(instance) >= 2 && instance.hasStatusEffect(StatusEffects.INVISIBILITY) || StealthHelper.getFullArmorObscuringEnchantmentLevel(target) >= 2 && target instanceof LivingEntity livingTarget && livingTarget.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -174,6 +174,6 @@ public abstract class PlayerEntityMixin {
         method = "attack"
     )
     private boolean shouldSpawnParticles(ServerWorld instance, ParticleEffect particle, double x, double y, double z, int count, double deltaX, double deltaY, double deltaZ, double speed) {
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return entity == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(entity) >= 2 && entity.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 }

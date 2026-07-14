@@ -26,6 +26,6 @@ public abstract class BlockItemMixin {
     )
     private boolean shouldPlaySound(World world, PlayerEntity source, BlockPos pos, SoundEvent sound, SoundCategory category, float volume, float pitch, ItemPlacementContext context) {
         LivingEntity entity = ((BlockItem)(Object)this).getPlacementContext(context).getPlayer();
-        return !(StealthHelper.isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
+        return entity == null || !(StealthHelper.isWearingFullVibralArmorSet(entity) || entity.hasStatusEffect(VibralEffects.SILENCE));
     }
 }

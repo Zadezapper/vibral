@@ -106,7 +106,7 @@ public abstract class BlockMixin {
         method = "spawnBreakParticles"
     )
     private boolean shouldSyncWorldEvent(World instance, PlayerEntity playerEntity, int eventId, BlockPos blockPos, int data) {
-        return !(StealthHelper.isWearingFullVibralArmorSet(playerEntity) || playerEntity.hasStatusEffect(VibralEffects.SILENCE));
+        return playerEntity == null || !(StealthHelper.isWearingFullVibralArmorSet(playerEntity) || playerEntity.hasStatusEffect(VibralEffects.SILENCE));
     }
 
     @Unique

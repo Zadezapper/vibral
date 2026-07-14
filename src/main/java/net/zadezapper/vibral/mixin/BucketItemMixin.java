@@ -23,6 +23,6 @@ public abstract class BucketItemMixin {
         method = "playEmptyingSound"
     )
     private boolean shouldPlaySound(WorldAccess instance, PlayerEntity player, BlockPos blockPos, SoundEvent soundEvent, SoundCategory soundCategory, float volume, float pitch) {
-        return !(StealthHelper.isWearingFullVibralArmorSet(player) || player.hasStatusEffect(VibralEffects.SILENCE));
+        return player == null || !(StealthHelper.isWearingFullVibralArmorSet(player) || player.hasStatusEffect(VibralEffects.SILENCE));
     }
 }

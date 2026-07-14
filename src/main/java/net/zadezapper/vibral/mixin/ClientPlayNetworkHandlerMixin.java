@@ -25,6 +25,6 @@ public abstract class ClientPlayNetworkHandlerMixin {
     private boolean shouldPlaySound(ClientWorld instance, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch, boolean useDistance, ItemPickupAnimationS2CPacket packet) {
         ClientPlayNetworkHandler clientPlayNetworkHandler = ((ClientPlayNetworkHandler)(Object)this);
         LivingEntity livingEntity = (LivingEntity)clientPlayNetworkHandler.getWorld().getEntityById(packet.getCollectorEntityId());
-        return !(StealthHelper.isWearingFullVibralArmorSet(livingEntity) || livingEntity.hasStatusEffect(VibralEffects.SILENCE));
+        return livingEntity  == null || !(StealthHelper.isWearingFullVibralArmorSet(livingEntity) || livingEntity.hasStatusEffect(VibralEffects.SILENCE));
     }
 }

@@ -81,7 +81,7 @@ public abstract class ItemEntityMixin implements FollowingItem {
         method = "tick"
     )
     private float getSlipperiness(Block instance, Operation<Float> original) {
-        if (vibral$targetEntity != null && vibral$followTicks-- > 0) {
+        if (vibral$targetEntity != null && vibral$followTicks > 0) {
             return Math.max(0.8f, original.call(instance));
         }
         return original.call(instance);

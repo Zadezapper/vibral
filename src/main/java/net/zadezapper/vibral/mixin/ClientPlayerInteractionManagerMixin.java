@@ -27,6 +27,6 @@ public abstract class ClientPlayerInteractionManagerMixin {
         method = "updateBlockBreakingProgress"
     )
     private boolean shouldPlay(SoundManager instance, SoundInstance sound) {
-        return !(StealthHelper.isHoldingVibralTool(client.player) || client.player.hasStatusEffect(VibralEffects.SILENCE));
+        return client.player == null || !(StealthHelper.isHoldingVibralTool(client.player) || client.player.hasStatusEffect(VibralEffects.SILENCE));
     }
 }

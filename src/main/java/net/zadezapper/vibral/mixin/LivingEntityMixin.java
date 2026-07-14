@@ -63,7 +63,7 @@ public abstract class LivingEntityMixin implements SneakTicker {
     @Inject(at = @At("HEAD"), method = "updatePotionSwirls", cancellable = true)
     private void updatePotionSwirls(CallbackInfo callbackInfo) {
         LivingEntity self = (LivingEntity)(Object)this;
-        if (StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY)) {
+        if (self != null && StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY)) {
             callbackInfo.cancel();
             self.getDataTracker().set(POTION_SWIRLS, new ArrayList<>());
             self.getDataTracker().set(POTION_SWIRLS_AMBIENT, false);
@@ -87,9 +87,9 @@ public abstract class LivingEntityMixin implements SneakTicker {
         ),
         method = "eatFood"
     )
-    private boolean shouldEatFood(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
+    private boolean shouldPlaySound(World world, PlayerEntity source, double x, double y, double z, SoundEvent sound, SoundCategory category, float volume, float pitch) {
         LivingEntity self = (LivingEntity)(Object)this;
-        return !(StealthHelper.isWearingFullVibralArmorSet(self) || self.hasStatusEffect(VibralEffects.SILENCE));
+        return self == null || !(StealthHelper.isWearingFullVibralArmorSet(self) || self.hasStatusEffect(VibralEffects.SILENCE));
     }
 
     @WrapWithCondition(
@@ -99,9 +99,9 @@ public abstract class LivingEntityMixin implements SneakTicker {
         ),
         method = "baseTick"
     )
-    private boolean shouldBaseTick(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    private boolean shouldAddParticle(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         LivingEntity self = (LivingEntity)(Object)this;
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return self == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -111,9 +111,9 @@ public abstract class LivingEntityMixin implements SneakTicker {
         ),
         method = "tickStatusEffects"
     )
-    private boolean shouldTickStatusEffect(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    private boolean shouldAddParticle2(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         LivingEntity self = (LivingEntity)(Object)this;
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return self == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -123,9 +123,9 @@ public abstract class LivingEntityMixin implements SneakTicker {
         ),
         method = "handleStatus"
     )
-    private boolean shouldHandleStatus(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    private boolean shouldAddParticle3(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         LivingEntity self = (LivingEntity)(Object)this;
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return self == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -135,9 +135,9 @@ public abstract class LivingEntityMixin implements SneakTicker {
         ),
         method = "addDeathParticles"
     )
-    private boolean shouldAddDeathParticles(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
+    private boolean shouldAddParticle4(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         LivingEntity self = (LivingEntity)(Object)this;
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return self == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @WrapWithCondition(
@@ -149,7 +149,7 @@ public abstract class LivingEntityMixin implements SneakTicker {
     )
     private boolean shouldSpawnItemParticles(World instance, ParticleEffect parameters, double x, double y, double z, double velocityX, double velocityY, double velocityZ) {
         LivingEntity self = (LivingEntity)(Object)this;
-        return !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
+        return self == null || !(StealthHelper.getFullArmorObscuringEnchantmentLevel(self) >= 2 && self.hasStatusEffect(StatusEffects.INVISIBILITY));
     }
 
     @Inject(at = @At(value = "HEAD"), method = "dropLoot", cancellable = true)
